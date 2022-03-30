@@ -1,6 +1,6 @@
 from vue import Print_menu
-from controller import UtilisateurManager
-from models_tournoi import Tournoi
+from application import UtilisateurManager
+from model_tournoi import Tournoi
 
 def main():
     class Menu():
@@ -20,8 +20,6 @@ def main():
                     print_menu.erreur_oui_non()
 
 
-    begin = Menu()
-    begin.commencer_tournoi()
 
 if __name__ == "__main__":
     main()
