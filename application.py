@@ -32,8 +32,11 @@ class TournoiManager:
     def afficher(self):
         print(self.tournoi)
 
-    def ajout_joueur(self, joueur):
-        self.tournoi.add_player(joueur)
+    def ajout_joueurs(self):
+        NB_JOUEURS = 8
+        for i in range(NB_JOUEURS):
+           joueur = UtilisateurManager.demander_infos_joueur(self)
+           self.tournoi.joueurs.append(joueur)
 
     def commencer(self):
         pass
@@ -84,4 +87,6 @@ class UtilisateurManager:
         return joueurs
 
 new = TournoiManager()
-print(new.creer_tournoi())
+tournoi = new.creer_tournoi()
+new.ajout_joueurs()
+print(tournoi)
