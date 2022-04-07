@@ -1,8 +1,6 @@
 from vue import MenuPrincipal
 from model_tournoi import Tournoi
-
-#test
-
+from model_joueur import Joueur
 
 class MenuManager:
     def __init__(self):
@@ -14,6 +12,11 @@ class TournoiManager:
         self.data = None
 
     def demander_infos_tournoi(self):
+        """ Cette methode recupère les informations pour créer un tournoi
+
+        Returns:
+            tableau: la methode retourne un tableau avec les informations du tournoi
+        """
         nom = input("Quel est le nom du tournoi ?\t")
         lieu = input("Où se déroule le tournoi ?\t")
         date = input("Quand se déroule le tournoi (JJ/MM/AAAA) ?\t")
@@ -22,6 +25,12 @@ class TournoiManager:
         return nom, lieu, date, temps, description
 
     def creer_tournoi(self):
+        """ cette methode recupère les informations du tournoi de la methode demander_infos_tournoi
+            pour créer un instance de tournoi à partir du model Tournoi
+
+        Returns:
+            str : la méthode retourne la représentation str de l'instance du tournoi
+        """
         self.tournoi = Tournoi(*self.demander_infos_tournoi())
         return self.tournoi
 
@@ -35,21 +44,32 @@ class TournoiManager:
         print(self.tournoi)
 
     def ajout_joueurs(self):
-        NB_JOUEURS = 8
+        NB_JOUEURS = 3
         for i in range(NB_JOUEURS):
-           joueur = UtilisateurManager.demander_infos_joueur(self)
-           self.tournoi.joueurs.append(joueur)
+           infos_joueur = UtilisateurManager.demander_infos_joueur(self)
+           joueur = Joueur(*infos_joueur)
+           self.tournoi.joueurs.append(joueur())
 
-    def commencer(self):
-        pass
+    def tri_joueurs_classement_mondial(self):
+        """ Cette méthode trie les joueurs en fonction de leur rang
+            au classement mondial
+
+        Returns:
+            tableau: les joueurs sont triés du rang le plus bas au plus élevé
+        """
+        for joueur in self.tournoi.joueurs:
+            joueurs_triés = sorted(self.tournoi.joueurs, key=lambda joueur: joueur[4])
+        return joueurs_triés
     
+    def tri_joueurs_points_tournoi(self):
+        pass
 
 class UtilisateurManager:
     def demander_infos_joueur(self):
-        """ Cette fonction recupère les informations sur chaque joueur avec des inputs
+        """ Cette méthode recupère les informations sur chaque joueur avec des inputs
 
         Returns:
-            tableau : la fonction retourne un tableau avec les informations sur chaque joueur
+            tableau : la méthode retourne un tableau avec les informations sur chaque joueur
                     qui ont été entrées par les organisateurs du tournoi
         """
         prenom_joueur = input("Quel est le prénom du joueur ?\t")
@@ -57,16 +77,17 @@ class UtilisateurManager:
         date_naissance_joueur = input("Qelle sa date de naissance ? (JJ/MM/AAAA)\t")
         sexe_joueur = input("Quel est son sexe ? (M/F)\t")
         points_mondial_joueur = input("Quel est le total de son nombre de points mondialement ?\t")
-        infos_joueur = [prenom_joueur, nom_joueur, date_naissance_joueur, sexe_joueur, points_mondial_joueur]
-        return infos_joueur
+        joueur = [prenom_joueur, nom_joueur, date_naissance_joueur, sexe_joueur, int(points_mondial_joueur)]
+        return joueur
+        
 
 
     def ajout_joueurs(self):
-        """  Cette fonction demande à l'organisateur du tournoi
+        """  Cette méthode demande à l'organisateur du tournoi
             s'il souhaite ajouter un nouveau joueur au tournoi
 
         Returns:
-            tableau: cette fonction renvoie un tableau de plusieurs tableaux 
+            tableau: cette méthode renvoie un tableau de plusieurs tableaux 
                     chaque tableau correspond aux informations de chaque nouveau joueur
         """
         quest = False
@@ -89,6 +110,7 @@ class UtilisateurManager:
         return joueurs
 
 new = TournoiManager()
-tournoi = new.creer_tournoi()
-new.ajout_joueurs()
-print(tournoi)
+new.creer_tournoi()
+ajout = new.ajout_joueurs()
+tri = new.tri_joueurs_classement_mondial()
+print(tri)

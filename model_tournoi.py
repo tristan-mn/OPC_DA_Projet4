@@ -17,7 +17,8 @@ class Tournoi:
     def __str__(self):
         return f"### Bienvenue au Tournoi ###\n" \
                f"#####  {self.nom} #####\n" \
-               f"Lieu: {self.lieu} date : {self.date} \n" \
+               f"Lieu: {self.lieu} \n" \
+               f"date : {self.date} \n" \
                f"Système: {self.temps}\n" \
                f"Description :{self.description}\n" \
                f"Joueurs : {'---'.join([str(j) for j in self.joueurs])}"
