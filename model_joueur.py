@@ -3,10 +3,10 @@ class Joueur:
     Classe modélisant un joueur du tournoi
 
     """
-    def __init__(self, nom=None, prenom=None, date_naissance=None, sexe=None, points_mondial=0, points_tournoi=0):
+    def __init__(self, prenom=None, nom=None, date_naissance=None, sexe=None, points_mondial=0, points_tournoi=0):
                   
-        self.nom = nom
         self.prenom = prenom
+        self.nom = nom
         self.date_naissance = date_naissance
         self.sexe = sexe
         self.points_mondial = points_mondial

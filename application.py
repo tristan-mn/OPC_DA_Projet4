@@ -45,7 +45,7 @@ class TournoiManager:
                     les joueurs sont ensuite ajoutés au tournoi
 
         """
-        NB_JOUEURS = 2
+        NB_JOUEURS = 8
         liste_joueurs = []
 
         for i in range(NB_JOUEURS):
@@ -80,24 +80,22 @@ class TournoiManager:
     def commencer_premier_tour(self):
         premier_tri = self.tri_joueurs_classement_mondial()
         matchs = MatchManager.creer_premiers_matchs(self, premier_tri)
-        self.tours_joués.append()
         return matchs
 
     def commencer_tour_suivant(self):
-        tri_suivant = self.tri_joueurs_points_tournoi(self, tri_suivant)
-        matchs = MatchManager.creer_matchs_suivants()
-        self.tours_joués.append(matchs)
+        tri_suivant = self.tri_joueurs_points_tournoi()
+        matchs = MatchManager.creer_matchs_suivants(self, tri_suivant)
         return matchs
 
-        
-            
+         
 
-    def demander_fin_tour(self):
-        fin = input("Le tour est-il terminé ?(oui/non)\t")
-        return fin
-
-
-
+    def lancer_tournoi(self):
+        NB_TOURS_SUIVANTS = 3
+        premiers_matchs = self.commencer_premier_tour()
+        resultat_premiers_matchs = MatchManager.resultat_match(self,premiers_matchs)
+        self.tours_joués = resultat_premiers_matchs
+        #for tour in range(NB_TOURS_SUIVANTS):
+        #    self.commencer_tour_suivant
 
 
 
@@ -119,7 +117,7 @@ class MatchManager:
             un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_joueur_milieu])
             indice_premier_joueur-=1
             indice_joueur_milieu-=1
-            matchs.append(un_match)
+            matchs.append(un_match())
         return matchs
     
     def creer_matchs_suivants(self, joueurs_triés):
@@ -136,22 +134,39 @@ class MatchManager:
             un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_deuxieme_joueur])
             indice_premier_joueur-=2
             indice_joueur_milieu-=2
-            matchs.append(match)
+            matchs.append(match())
         return matchs
 
 
-    def resultat_match(self, joueur1, joueur2):
+    def resultat_match(self, matchs):
         """
         Cette méthode permet de demander au responsable du tournoi le resultat de chaque match
 
         Args:
-            joueur1 (str): nom et prenom du premier joueur
-            joueur2 (str): nom et prenom du deuxieme joueur
+            matchs (list): liste de tous les matchs pour chaque tour
+
+        Returns:
+            list: liste des matchs avec les score mis à jour
         """
-        score_joueur1 = input(f"quel est le score du joueur {joueur1}\t")
-        score_joueur2 = input(f"quel est le score du joueur {joueur2}\t")
 
-
+        for match in matchs:
+            print("Victoire > 1 point")
+            print("Match nul > 0.5 point")
+            print("Défaite > 0 point")
+            print(f"quel est le score du joueur {match[0][0][0]} {match[0][0][1]}\t")
+            score_joueur1 = input("=>\t")
+            # ajout des points dans le tuple du match
+            match[0][1] += float(score_joueur1)
+            # ajout des points dans la liste des infos du joueur
+            match[0][0][5] += float(score_joueur1)
+            print(f"quel est le score du joueur {match[1][0][0]} {match[1][0][1]}\t")
+            score_joueur2 = input("=>\t")
+            # ajout des points dans le tuple du match
+            match[1][1] += float(score_joueur2)
+            # ajout des points dans la liste des infos du joueur
+            match[1][0][5] += float(score_joueur2)
+            
+        return matchs    
 
 
 
@@ -193,5 +208,5 @@ class RapportManager:
 
 tournoi = TournoiManager()
 tournoi()
-tournoi.commencer_premier_tour()
+tournoi.lancer_tournoi()
 print(tournoi.tours_joués)
