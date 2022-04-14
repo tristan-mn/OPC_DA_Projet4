@@ -1,3 +1,5 @@
+from os import system, name
+
 
 class MenuPrincipal:
     def afficher_menuprincipal(self):
@@ -9,34 +11,63 @@ class MenuPrincipal:
         print("***   Que souhaitez-vous faire ?  ***\n")
 
     def choix_menu_principal(self):
-        print()
-        print(" 1/ Menu Tournoi \n"
-              " 2/ Menu Joueur \n"
-              " 3/ Quitter le menu principal !\n")
-        choix = input("=>\t")
+        choix_fini = False
+        while choix_fini == False:
+            print()
+            print(" 1/ Menu Tournoi \n"
+                  " 2/ Menu Joueur \n"
+                  " 3/ Quitter le menu principal !\n")
+            choix = input("=>\t")
+
+            if choix == "1" or choix == "2" or choix == "3":
+                choix_fini == True
+                break
+            
         return choix
+
+class NettoyerEcran:
+    """Nettoyer le terminal"""
+    def __call__(self):
+        # pour windows
+        if name == 'nt':
+            _ = system('cls')
+        # pour mac et linux(ici, os.name est 'posix')
+        else:
+            _ = system('clear')
 
 
 class MenuJoueur:
-    def menu_joueur(self):
-        print()
-        print(" 1/ Ajouter un joueur \n"
-              " 2/ Mettre à joueur le classement du joueur \n"
-              " 3/ Afficher informations joueurs \n"
-              " 4/ Retourner au Menu Principal ! \n")
-        choix = input("=>\t")
-        return choix
+    def choix_menu_joueur(self):
+        choix_fini = False
+        while choix_fini == False:
+            print()
+            print(" 1/ Mettre à jour le classement des joueurs \n"
+                  " 2/ Afficher informations joueurs \n"
+                  " 3/ Retourner au Menu Principal ! \n")
+            choix = input("=>\t")
+            if choix == "1" or choix == "2" or choix == "3" or choix != "4":
+                choix_fini == True
+                break
+
+            return choix
 
     def ajout_joueur(self):
         print()
         print("Le joueur a bien été ajouté au tournoi.")
 
     def menu_informations_joueur(self):
-        print()
-        print(" 1/ Afficher les joueurs par ordre alphabétique \n"
-              " 2/ Afficher classement mondial des joueurs par points \n"
-              " 3/ Retourner au Menu Principal \n")
-        choix = input("=>\t")
+        choix_fini = False
+
+        while choix_fini == False:
+            print()
+            print(" 1/ Afficher les joueurs par ordre alphabétique \n"
+                  " 2/ Afficher classement mondial des joueurs par points \n"
+                  " 3/ Retourner au Menu Principal \n")
+            choix = input("=>\t")
+            if choix == "1" or choix == "2" or choix == "3":
+                choix_fini == True
+                break
+
         return choix
     
     def menu_classement_alphabetique_joueur(self):
@@ -49,13 +80,19 @@ class MenuJoueur:
 
 
 class MenuTournoi:
-    def menu_tournoi(self):
-        print()
-        print(" 1/ Créer un nouveau tournoi \n"
-              " 2/ Reprendre un tournoi en cours \n"
-              " 3/  Afficher informations tournoi \n"
-              " 4/ Retourner au Menu Principal \n")
-        choix = input("=>\t")
+    def choix_menu_tournoi(self):
+        choix_fini = False
+        while choix_fini == False:
+            print()
+            print(" 1/ Créer un nouveau tournoi \n"
+                  " 2/ Reprendre un tournoi en cours \n"
+                  " 3/ Afficher les informations du tournoi \n"
+                  " 4/ Retourner au Menu Principal \n")
+            choix = input("=>\t")
+            if choix == "1" or choix == "2" or choix == "3" or choix == "4":
+                choix_fini == True
+                break
+
         return choix
 
     def creer_tournoi(self):
@@ -72,20 +109,33 @@ class MenuTournoi:
         print("Voici tous les tournois enregistrés : \n")
 
     def menu_informations_tous_tournois(self):
-        print()
-        print("1/ Afficher tous les tournois \n"
-              "2/ Choisir un tournoi \n"
-              "3/ Retourner au Menu Principal \n")
-        choix = input("=>\t")
+        choix_fini = False
+
+        while choix_fini == False:
+            print()
+            print("1/ Afficher tous les tournois \n"
+                  "2/ Choisir un tournoi \n"
+                  "3/ Retourner au Menu Principal \n")
+            choix = input("=>\t")
+            if choix == "1" or choix == "2" or choix == "3":
+                choix_fini == True
+                break
+
         return choix
 
     def menu_informations_un_tournoi(self):
-        print()
-        print(" 1/ Afficher les joueurs \n"
-              " 2/ Afficher les tours \n"
-              " 3/ Afficher les matchs \n"
-              " 4/ Retour au Menu Principal \n")
-        choix = input("=>\t")
+        choix_fini = False
+
+        while choix_fini == False:
+            print()
+            print(" 1/ Afficher les joueurs \n"
+                " 2/ Afficher les tours \n"
+                " 3/ Afficher les matchs \n"
+                " 4/ Retour au Menu Principal \n")
+            choix = input("=>\t")
+            if choix == "1" or choix == "2" or choix == "3":
+                choix_fini == True
+                break
         return choix
     
     def retour_menu_principal(self):
