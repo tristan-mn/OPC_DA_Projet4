@@ -1,3 +1,4 @@
+from unittest import result
 from vue import MenuPrincipal, MenuTournoi
 from model_tournoi import Tournoi
 from model_joueur import Joueur
@@ -8,8 +9,8 @@ from datetime import datetime
 
 class TournoiManager:
     def __call__(self):
-        self.tours_joués = []
-        self.tournoi = Tournoi(*self.demander_infos_tournoi(), joueurs=self.ajout_joueurs(), liste_tours=self.tours_joués)
+        self.tournoi = Tournoi(*self.demander_infos_tournoi(), joueurs=self.ajout_joueurs())
+        self.debut_tournoi = self.lancer_tournoi()
     
 
 
@@ -34,6 +35,10 @@ class TournoiManager:
         pass
 
     def afficher(self):
+        """
+        Cette méthode affiche les information du tournoi en cours
+
+        """
         print(self.tournoi)
 
     def ajout_joueurs(self):
@@ -63,9 +68,10 @@ class TournoiManager:
             tableau: les joueurs sont triés du rang le plus bas au plus élevé
         """
         for joueur in self.tournoi.joueurs:
-            joueurs_triés = sorted(self.tournoi.joueurs, key=lambda joueur: joueur[4])
+            joueurs_triés = sorted(self.tournoi.joueurs, reverse=True, key=lambda joueur: joueur[4])
         return joueurs_triés
     
+
     def tri_joueurs_points_tournoi(self):
         """
         Cette méthode trie les joueurs en fonctions des points qu'ils ont gagnés durant le tournoi
@@ -77,25 +83,43 @@ class TournoiManager:
             joueurs_triés = sorted(self.tournoi.joueurs, key=lambda joueur: joueur[5])
         return joueurs_triés
         
+
     def commencer_premier_tour(self):
+        """
+        Cette méthode tri les joueurs en fonction de leurs classement mondial avant de créer les matchs
+        Returns:
+            list: retourne une liste de matchs
+        """
         premier_tri = self.tri_joueurs_classement_mondial()
         matchs = MatchManager.creer_premiers_matchs(self, premier_tri)
         return matchs
 
+
     def commencer_tour_suivant(self):
+        """ Cette méthode tri les joueurs en fonction de leurs points accumulés durant le tournoi avant de créer les matchs
+        Returns:
+            list: retourne une liste de matchs
+        """
         tri_suivant = self.tri_joueurs_points_tournoi()
         matchs = MatchManager.creer_matchs_suivants(self, tri_suivant)
         return matchs
 
          
-
     def lancer_tournoi(self):
+        """
+        Cette méthode permet de lancer le tournoi Suisse
+
+        """
         NB_TOURS_SUIVANTS = 3
         premiers_matchs = self.commencer_premier_tour()
         resultat_premiers_matchs = MatchManager.resultat_match(self,premiers_matchs)
-        self.tours_joués = resultat_premiers_matchs
-        #for tour in range(NB_TOURS_SUIVANTS):
-        #    self.commencer_tour_suivant
+        self.tournoi.liste_tours.append(resultat_premiers_matchs)
+        print(resultat_premiers_matchs)
+        for tour in range(NB_TOURS_SUIVANTS):
+            matchs_suivants = self.commencer_tour_suivant()
+            print(matchs_suivants)
+            resultat_tour_suivant = MatchManager.resultat_match(self, matchs_suivants)
+            self.tournoi.liste_tours.append(resultat_tour_suivant)
 
 
 
@@ -105,7 +129,7 @@ class MatchManager:
 
     def creer_premiers_matchs(self, joueurs_triés):
         """
-            Cette méthode permet de créer les 4 matchs pour le premier tour du tournoi
+            Cette méthode permet de créer les 4 matchs pour le premier tour du tournoi suisse
 
         """
         indice_premier_joueur = 7
@@ -122,7 +146,7 @@ class MatchManager:
     
     def creer_matchs_suivants(self, joueurs_triés):
         """
-        Cette méthode permet de créer les 4 matchs pour les 3 derniers tours du tournoi
+        Cette méthode permet de créer les 4 matchs pour les 3 derniers tours du tournoi suisse
 
         """
         indice_premier_joueur = 7
@@ -133,8 +157,8 @@ class MatchManager:
         for match in range(nb_matchs):
             un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_deuxieme_joueur])
             indice_premier_joueur-=2
-            indice_joueur_milieu-=2
-            matchs.append(match())
+            indice_deuxieme_joueur-=2
+            matchs.append(un_match())
         return matchs
 
 
@@ -188,8 +212,8 @@ class JoueurManager:
         nom_joueur = input("Quel est le nom du joueur ?\t")
         date_naissance_joueur = input("Qelle sa date de naissance ? (JJ/MM/AAAA)\t")
         sexe_joueur = input("Quel est son sexe ? (M/F)\t")
-        points_mondial_joueur = input("Quel est le total de son nombre de points mondialement ?\t")
-        joueur = [prenom_joueur, nom_joueur, date_naissance_joueur, sexe_joueur, int(points_mondial_joueur)]
+        classement_mondial = input("Quel est le classement mondial du joueur ?\t")
+        joueur = [prenom_joueur, nom_joueur, date_naissance_joueur, sexe_joueur, int(classement_mondial)]
         return joueur
         
 
@@ -208,5 +232,5 @@ class RapportManager:
 
 tournoi = TournoiManager()
 tournoi()
-tournoi.lancer_tournoi()
-print(tournoi.tours_joués)
+print()
+print(tournoi.tournoi.liste_tours)
