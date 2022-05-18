@@ -17,11 +17,16 @@ class MenuPrincipalController:
         choix_menu_principal = self.vue.choix_menu_principal()
 
         if choix_menu_principal == "1":
-           JoueurMenuController() 
+            self.controller_choisi = TournoiMenuController()
+            self.controller_choisi()
         elif choix_menu_principal == "2":
-            TournoiMenuController
+            self.controller_choisi = JoueurMenuController()
+            self.controller_choisi()
         elif choix_menu_principal == "3":
-            QuitterApplication()
+            self.controller_choisi = QuitterApplication()
+            self.controller_choisi()
+
+
 
 class JoueurMenuController(MenuPrincipalController):
     
@@ -32,7 +37,7 @@ class JoueurMenuController(MenuPrincipalController):
         self.menu_principal_controller = MenuPrincipalController()
 
     def __call__(self):
-        choix = MenuJoueur.choix_menu_joueur()
+        choix = MenuJoueur.choix_menu_joueur(self)
         if choix == "1":
             # mettre a jour le classement
             # self.controller_choisi = self
@@ -47,23 +52,38 @@ class JoueurMenuController(MenuPrincipalController):
 
 class TournoiMenuController(MenuPrincipalController):
     
-    def __init__(self):
-        super().__init__()
-        self.creer_tournoi = TournoiManager()
-        self.rapport_tournoi = TournoiManager()
-        self.reprendre_tournoi = TournoiManager() 
+    # def __init__(self):
+    #     super().__init__()
+    #     self.creer_tournoi = TournoiManager.creer_tournoi()
+    #     self.ajout_joueurs = TournoiManager.ajout_joueurs(self)
+    #     self.commencer_tournoi = TournoiManager()
+    #     self.modifier_tournoi = TournoiManager()
+    #     self.reprendre_tournoi = TournoiManager() 
+    #     self.rapport_tournoi = TournoiManager()
         # il faut ajouter les méthodes après les objets
 
     def __call__(self):
-        choix = MenuTournoi.choix_menu_tournoi()
-        if choix == "1":
-            self.controller_choisi = self.creer_tournoi()
-        if choix == "2":
-            self.controller_choisi = self.reprendre_tournoi()
-        if choix == "3":
-            self.controller_choisi = self.rapport_tournoi()
-        if choix == "4":
-            self.controller_choisi = MenuPrincipalController()
+        choix = ""
+        while choix != "7":
+            choix = MenuTournoi.choix_menu_tournoi()
+            if choix == "1":
+                self.controller_choisi = TournoiManager.creer_tournoi(self)
+            if choix == "2":
+                self.controller_choisi = TournoiManager.ajout_joueurs(self)
+            if choix == "3":
+                pass
+                self.controller_choisi = TournoiManager.lancer_tournoi(self)
+            if choix == "4":
+                pass
+                # self.controller_choisi = modifier_tournoi
+            if choix == "5":
+                pass
+                # self.controller_choisi = reprendre_tournoi
+            if choix == "6":
+                pass
+                # self.controller_choisi = afficher_rapport
+            if choix == "7":
+                self.controller_choisi = MenuPrincipalController()
 
 
 class QuitterApplication:

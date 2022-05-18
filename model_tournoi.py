@@ -1,6 +1,7 @@
-from tinydb import TinyDB
+from textwrap import indent
+from tinydb import TinyDB, where
 
-tournois_database = TinyDB('tournois.json')
+tournois_database = TinyDB('tournois.json', indent=4)
 
 
 class Tournoi:
@@ -12,13 +13,15 @@ class Tournoi:
         self.nom = nom
         self.lieu = lieu
         self.date = date
-        temps_partie = ["blitz", "bullet", "Un coup rapide"]
-        self.temps = temps_partie[temps - 1]
+        self.temps = temps
         self.description = description
         self.nombre_tours = nombre_tours
         self.liste_tours = liste_tours
         self.joueurs = joueurs
+        self.infos_tournoi = [self.nom, self.lieu, self.date, self.temps, self.description, self.nombre_tours, self.joueurs, self.liste_tours]
 
+    def __call__(self):
+        return self.infos_tournoi
 
     def __str__(self):
         return f"### Bienvenue au Tournoi ###\n" \
@@ -31,47 +34,37 @@ class Tournoi:
                f" {self.liste_tours}"
 
 
-    def serialized(self):
+    def tournoi_serialized(self):
         infos_tournoi = {}
-        infos_tournoi['Nom du tournoi'] = self.nom
-        infos_tournoi['Lieu'] = self.lieu
-        infos_tournoi['Date'] = self.date
-        infos_tournoi['Description'] = self.description
-        infos_tournoi['Controle du temps'] = self.temps
-        infos_tournoi['Nombre de tours'] = self.nombre_tours
-        infos_tournoi["Joueurs_id"] = self.joueurs
-        infos_tournoi["Tours"] = self.liste_tours
-        infos_tournoi["Id du tournoi"] = self.tournoi_id
-
+        infos_tournoi['nom'] = self.nom
+        infos_tournoi['lieu'] = self.lieu
+        infos_tournoi['date'] = self.date
+        infos_tournoi['controle du temps'] = self.temps
+        infos_tournoi['description'] = self.description
+        infos_tournoi['nombre de tours'] = self.nombre_tours
+        infos_tournoi["joueurs"] = self.joueurs
+        infos_tournoi["tours"] = self.liste_tours
+        #infos_tournoi["Id du tournoi"] = self.tournoi_id
         return infos_tournoi
 
     def unserialized(self, tournoi_serialized):
-        nom = tournoi_serialized['Nom du tournoi']
-        lieu = tournoi_serialized['Lieu']
-        date = tournoi_serialized['Date']
-        description = tournoi_serialized['Description']
-        temps = tournoi_serialized['Controle du temps']
-        nombre_tours = tournoi_serialized['Nombre de tours']
-        joueurs = tournoi_serialized["Joueurs_id"]
-        liste_tours = tournoi_serialized["Tours"]
-        tournoi_id = tournoi_serialized["Id du tournoi"]
+        nom = tournoi_serialized['nom']
+        lieu = tournoi_serialized['lieu']
+        date = tournoi_serialized['date']
+        temps = tournoi_serialized['controle du temps']
+        description = tournoi_serialized['description']
+        nombre_tours = tournoi_serialized['nombre de tours']
+        liste_tours = tournoi_serialized["tours"]
+        joueurs = tournoi_serialized["joueurs_id"]
+        #tournoi_id = tournoi_serialized["Id du tournoi"]
 
-        return Tournoi(nom, lieu, date, description, temps, nombre_tours, joueurs, liste_tours, tournoi_id)
+        return Tournoi(nom, lieu, date, temps, description, nombre_tours, liste_tours, joueurs)
 
-    def add_to_database(self, infos_tournoi):
-        tournoi = Tournoi(infos_tournoi[0],
-                          infos_tournoi[1],
-                          infos_tournoi[2],
-                          infos_tournoi[3],
-                          infos_tournoi[4],
-                          infos_tournoi[5],
-                          infos_tournoi[6],
-                                )
-        tournoi_id = tournois_database.insert(tournoi.serialized())
-        tournois_database.update({"Id du tournoi": tournoi_id}, doc_ids=[tournoi_id])
+    def add_to_database(self, tournoi):
+        tournoi_id = tournois_database.insert(tournoi)
+        tournois_database.update({"id du tournoi": tournoi_id}, doc_ids=[tournoi_id])
 
 
-   # controle_temps : float
    # blitz = 10 min ou moins pour jouer l'ensemble des coups
    # bullet = 3 min ou moins pour jouer l'ensemble des coups
    # jeu rapide = au moins 15 min et moins de 60 min pour jouer l'ensemble des coups
