@@ -374,8 +374,6 @@ class RapportJoueurManager:
             print()
             print(joueur)
 
-    def rapport_joueurs(self):
-        pass
 
 class RapportTournoiManager:
     def lancer_rapport(self):
