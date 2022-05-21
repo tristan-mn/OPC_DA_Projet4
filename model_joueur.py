@@ -11,40 +11,41 @@ class Joueur:
     Classe modélisant un joueur du tournoi
 
     """
-    def __init__(self, prenom=None, nom=None, date_naissance=None, sexe=None, classement_mondial=0, points_tournoi=0):
+    def __init__(self, prenom=None, nom=None, date_naissance=None, sexe=None, classement=0, score=0, id_joueur=None):
                   
         self.prenom = prenom
         self.nom = nom
         self.date_naissance = date_naissance
         self.sexe = sexe
-        self.classement_mondial = classement_mondial
-        self.points_tournoi = points_tournoi
-        self.infos_joueur = [self.prenom, self.nom, self.date_naissance, self.sexe, self.classement_mondial, self.points_tournoi]
+        self.classement = classement
+        self.score = score
+        self.id_joueur = id_joueur
+        self.infos_joueur = [self.prenom, self.nom, self.date_naissance, self.sexe, self.classement, self.score, self.id_joueur]
+    
     
     def __call__(self):
         return self.infos_joueur
 
 
+    def __str__(self):
+        return f"\nNom: {self.nom}\nPrénom: {self.prenom}\ndate de naissance: {self.date_naissance}\nSexe: {self.sexe}" \
+   		       f"\nClassement mondial: {self.classement}\nScore: {self.score}\n"
+
+    
     def serialized(self):
         infos_joueur = {}
         infos_joueur['prenom'] = self.prenom
         infos_joueur['nom'] = self.nom
-        infos_joueur['date de naissance'] = self.date_naissance
+        infos_joueur['date_naissance'] = self.date_naissance
         infos_joueur['sexe'] = self.sexe
-        infos_joueur['classement'] = self.classement_mondial
-        infos_joueur['score'] = self.points_tournoi
-        #infos_joueur['Id du joueur'] = self.player_id
+        infos_joueur['classement'] = self.classement
+        infos_joueur['score'] = self.score
         return infos_joueur
 
     def unserialized(self, joueur_serialized):
-        prenom = joueur_serialized["prenom"]
-        nom = joueur_serialized["nom"]
-        date_naissance = joueur_serialized["date de naissance"]
-        sexe = joueur_serialized["sexe"]
-        classement_mondial = joueur_serialized["classement"]
-        points_tournoi = joueur_serialized["score"]
-        #player_id = joueur_serialized["Id du joueur"]
-        return Joueur(prenom,nom,date_naissance,sexe,classement_mondial,points_tournoi)
+        joueur_unserialized = Joueur(**joueur_serialized)
+        
+        return joueur_unserialized()
 
     
     def ajout_joueur_database(self, joueur):

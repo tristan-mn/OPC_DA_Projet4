@@ -1,8 +1,11 @@
+from multiprocessing.sharedctypes import Value
 from tkinter import Menu
 from unittest import result
-from vue import MenuPrincipal, MenuTournoi, MenuJoueur , MenuTour
+
+from tinydb import where
+from vue import MenuPrincipal, MenuRapportJoueur, MenuRapportTournoi, MenuTournoi, MenuJoueur , MenuTour
 from model_tournoi import Tournoi
-from model_joueur import Joueur
+from model_joueur import Joueur, joueurs_database
 from model_match import Match
 from model_tour import Tour
 from datetime import datetime
@@ -50,16 +53,17 @@ class TournoiManager:
         NB_JOUEURS = 8
         liste_joueurs = []
         dict_joueurs = []
+        joueur_manager = JoueurManager()
 
         tournoi_choisi = MenuTournoi.ajout_joueurs(self)
 
         for i in range(NB_JOUEURS):
-           infos_joueur = JoueurManager.demander_infos_joueur(self)
-           joueur = Joueur(*infos_joueur)
-           liste_joueurs.append(joueur())
-           dict_joueurs.append(joueur.serialized())
-           Joueur.ajout_joueur_database(self, joueur.serialized())
-           MenuJoueur.ajout_joueur()
+            infos_joueur = joueur_manager.ajout_infos_joueur()
+            joueur = Joueur(*infos_joueur)
+            liste_joueurs.append(joueur())
+            dict_joueurs.append(joueur.serialized())
+            Joueur.ajout_joueur_database(self, joueur.serialized())
+            MenuJoueur.ajout_joueur()
         
         Joueur.ajout_tournoi_database(self, tournoi=tournoi_choisi, joueurs=dict_joueurs)
         
@@ -123,18 +127,19 @@ class TournoiManager:
         self.tournoi.liste_tours.append(Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=matchs))
         return matchs
 
-         
-    def lancer_tournoi(self):
+        
+    def lancer_tournoi(self, tour):
         """
         Cette méthode permet de lancer le tournoi Suisse
 
         """
-        NB_TOURS_SUIVANTS = 3
+        nb_tours_suivants = 3
+        # modifier le nombre de tour à jouer en soustrayant le nombre de tours joués qui est en paramètre
         premiers_matchs = self.commencer_premier_tour()
         resultat_premiers_matchs = MatchManager.resultat_match(self,premiers_matchs)
         self.tournoi.liste_tours.append(resultat_premiers_matchs)
         print(resultat_premiers_matchs)
-        for tour in range(NB_TOURS_SUIVANTS):
+        for tour in range(nb_tours_suivants):
             matchs_suivants = self.commencer_tour_suivant()
             print(matchs_suivants)
             resultat_tour_suivant = MatchManager.resultat_match(self, matchs_suivants)
@@ -214,39 +219,164 @@ class MatchManager:
 
 
 
-
-
-
 class JoueurManager:
-    def demander_infos_joueur(self):
-        """ Cette méthode recupère les informations sur chaque joueur avec des inputs
+    def ajout_infos_joueur(self):
+        prenom = self.ajout_prenom_joueur()
+        nom = self.ajout_nom_joueur()
+        date_naissance = self.ajout_date_naissance_joueur()
+        sexe = self.ajout_sexe_joueur()
+        classement = self.ajout_classement_joueur()
+        return [prenom, nom, date_naissance, sexe, classement]
+    
 
-        Returns:
-            tableau : la méthode retourne un tableau avec les informations sur chaque joueur
-                    qui ont été entrées par les organisateurs du tournoi
-        """
-        print()
-        print("Veuillez ajouter un joueur au tournoi ...")
-        print()
-        prenom_joueur = input("Quel est le prénom du joueur ?\t")
-        nom_joueur = input("Quel est le nom du joueur ?\t")
-        date_naissance_joueur = input("Qelle sa date de naissance ? (JJ/MM/AAAA)\t")
-        sexe_joueur = input("Quel est son sexe ? (M/F)\t")
-        classement_mondial = input("Quel est le classement mondial du joueur ?\t")
-        # classement_mondial = 5
-        joueur = [prenom_joueur, nom_joueur, date_naissance_joueur, sexe_joueur, int(classement_mondial)]
-        return joueur
+    def ajout_prenom_joueur(self):
+        prenom_valide = False
+        while prenom_valide == False:
+            prenom_joueur = input("Quel est le prénom du joueur ?\t")
+            if prenom_joueur != "":
+                prenom_valide = True
+                break
+            else:
+                print()
+                print("... ERREUR ...")
+                print()
+                print("Vous devez entrer un prenom.")
+        return prenom_joueur
+                
+                
+    def ajout_nom_joueur(self):
+        nom_valide = False
+        while nom_valide == False:
+            nom_joueur = input("Quel est le nom du joueur ?\t")
+            if nom_joueur != "":
+                nom_valide = True
+                break
+            else:
+                print()
+                print("... ERREUR ...")
+                print()
+                print("Vous devez entrer un nom.")
+        return nom_joueur
+                
+                
+    def ajout_date_naissance_joueur(self):
+        liste_date = []
+        jour_valide = False
+        
+        while jour_valide == False:
+            self.jour = input("Entrez le jour de naissance: (JJ)\t")
+            if self.jour.isdigit() and len(self.jour) == 2 and int(self.jour) < 32:
+                jour_valide = True
+                liste_date.append(self.jour)
+                break
+            else:
+                print()
+                print("... ERREUR ...")
+                print()
+                print("Vous devez entrer un nombre à 2 chiffres <= 31")
+                
+        mois_valide = False
+        while mois_valide == False:
+            self.mois = input("Entrez le mois de naissance: (MM)\t")
+            if self.mois.isdigit() and len(self.mois) == 2 and int(self.mois) < 13:
+                mois_valide = True
+                liste_date.append(self.mois)
+                break
+            else:
+                print()
+                print("... ERREUR ...")
+                print()
+                print("Vous devez entrer un nombre à 2 chiffres <= 12")
+        
+        annee_valid = False
+        while annee_valid == False:
+            self.annee = input("Entrez l'année de naissance: (AAAA)\t")
+            if self.annee.isdigit() and len(self.annee) == 4:
+                annee_valid = True
+                liste_date.append(self.annee)
+                break
+            else:
+                print()
+                print("... ERREUR ...")
+                print()
+                print("Veuillez entrer une année à 4 chiffres")
+
+        return f"{liste_date[0]}/{liste_date[1]}/{liste_date[2]}"
+        
+        
+    def ajout_sexe_joueur(self):
+        sexe_valide = False
+        while sexe_valide == False:
+            sexe_joueur = input("Quel est son sexe ? (M/F)\t")
+            if sexe_joueur == "M" or sexe_joueur == "F":
+                sexe_valide = True
+                break
+            else:
+                print()
+                print("... ERREUR ...")
+                print()
+                print("Vous devez entrer M pour masculin ou F pour Féminin.")
+        return sexe_joueur
+    
+    
+    def ajout_classement_joueur(self):
+        classement_valide = False
+        while classement_valide == False:
+            classement_joueur = int(input("Quel est le classement mondial du joueur ? (1 --> 100)\t"))
+            if classement_joueur >= 1 and classement_joueur <= 100:
+                classement_valide = True
+                break
+            else:
+                print()
+                print("... ERREUR ...")
+                print()
+                print("Vous devez entrer un nombre entre 1 et 100.")
+        return classement_joueur
         
 
 
+class RapportJoueurManager:
+    def lancer_rapport(self):
+        menu_rapport_joueur = MenuRapportJoueur()
+        choix = menu_rapport_joueur.afficher_menu_rapport_joueur()
+        if choix == "1":
+            # alphabetique
+            menu_rapport_joueur.afficher_joueurs_orde_alphabetique()
+            joueurs = joueurs_database.all()
+            joueurs_tri_alphabetique = sorted(joueurs, key=lambda joueur:joueur['nom'])
+            print()
 
+            for joueur in joueurs_tri_alphabetique:
+                rapport_joueur = Joueur(**joueur)
+                print(rapport_joueur)
 
+            
+        elif choix == "2":
+            # classement
+            menu_rapport_joueur.afficher_joueurs_ordre_classement()
 
+            joueurs = joueurs_database.all()
+            joueurs_tri_score = sorted(joueurs, key=lambda joueur: joueur['classement'])
+            print()
 
+            for joueur in joueurs_tri_score:
+                rapport_joueur = Joueur(**joueur)
+                print(rapport_joueur)
 
-class RapportManager:
+        elif choix == "3":
+            # recherche par nom et prenom
+            print()
+            prenom = input("Quel est le prenom du joueur ?\t")
+            nom = input("Quel est le nom du joueur ?\t")
+            joueur = Joueur(**joueurs_database.get(where("nom") == nom and where("prenom") == prenom))
+            print()
+            menu_rapport_joueur.afficher_un_joueur()
+            print()
+            print(joueur)
+
     def rapport_joueurs(self):
         pass
 
-    def rapport_tournois(self):
+class RapportTournoiManager:
+    def lancer_rapport(self):
         pass

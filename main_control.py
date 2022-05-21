@@ -2,7 +2,7 @@ import sys
 
 from vue import MenuJoueur, MenuPrincipal, MenuTournoi
 from vue import NettoyerEcran
-from application import TournoiManager, JoueurManager
+from application import RapportJoueurManager, RapportTournoiManager, TournoiManager, JoueurManager
 
 
 class MenuPrincipalController:
@@ -43,24 +43,14 @@ class JoueurMenuController(MenuPrincipalController):
             # self.controller_choisi = self
             pass
         elif choix == "2":
-            # rapport sur les joueurs
-            pass
+            self.controller_choisi = RapportJoueurManager.lancer_rapport(self)
+            
         elif choix == "3":
             self.controller_choisi = self.menu_principal_controller()
 
 
 
 class TournoiMenuController(MenuPrincipalController):
-    
-    # def __init__(self):
-    #     super().__init__()
-    #     self.creer_tournoi = TournoiManager.creer_tournoi()
-    #     self.ajout_joueurs = TournoiManager.ajout_joueurs(self)
-    #     self.commencer_tournoi = TournoiManager()
-    #     self.modifier_tournoi = TournoiManager()
-    #     self.reprendre_tournoi = TournoiManager() 
-    #     self.rapport_tournoi = TournoiManager()
-        # il faut ajouter les méthodes après les objets
 
     def __call__(self):
         choix = ""
@@ -68,22 +58,32 @@ class TournoiMenuController(MenuPrincipalController):
             choix = MenuTournoi.choix_menu_tournoi()
             if choix == "1":
                 self.controller_choisi = TournoiManager.creer_tournoi(self)
-            if choix == "2":
+
+            elif choix == "2":
                 self.controller_choisi = TournoiManager.ajout_joueurs(self)
-            if choix == "3":
+
+            elif choix == "3":
                 pass
                 self.controller_choisi = TournoiManager.lancer_tournoi(self)
-            if choix == "4":
+
+            elif choix == "4":
                 pass
                 # self.controller_choisi = modifier_tournoi
-            if choix == "5":
+
+            elif choix == "5":
                 pass
                 # self.controller_choisi = reprendre_tournoi
-            if choix == "6":
-                pass
-                # self.controller_choisi = afficher_rapport
-            if choix == "7":
+
+            elif choix == "6":
+                self.controller_choisi = RapportTournoiManager.lancer_rapport()
+
+            elif choix == "7":
                 self.controller_choisi = MenuPrincipalController()
+            
+            else:
+                print()
+                print("... ERREUR ...")
+                print(" Vous devez faire un choix entre 1 et 7.")
 
 
 class QuitterApplication:

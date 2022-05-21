@@ -19,8 +19,8 @@ class MenuPrincipal:
                   " 3/ Quitter le menu principal !\n")
             choix = input("=>\t")
             if choix == "1" or choix == "2" or choix == "3":
-                choix_fini == True
-                return choix
+                choix_fini = True
+        return choix
 
 class NettoyerEcran:
     """Nettoyer le terminal"""
@@ -43,10 +43,10 @@ class MenuJoueur:
                   " 3/ Retourner au Menu Principal ! \n")
             choix = input("=>\t")
             if choix == "1" or choix == "2" or choix == "3":
-                choix_fini == True
+                choix_fini = True
                 break
 
-            return choix
+        return choix
 
     def ajout_joueur():
         print()
@@ -71,7 +71,7 @@ class MenuTournoi:
                   " 7/ Retourner au Menu Principal \n")
             choix = input("=>\t")
             if choix == "1" or choix == "2" or choix == "3" or choix == "4" or choix == "5" or choix == "6" or choix == "7":
-                choix_fini == True
+                choix_fini = True
                 break
 
         return choix
@@ -92,9 +92,12 @@ class MenuTournoi:
         while nom_valide == False:
             nom_tournoi = input("Quel est le nom du tournoi ? \t")
             if nom_tournoi != "":
-                valid_tournament_name = True
+                nom_valide = True
                 break
             else:
+                print()
+                print("... ERREUR ...")
+                print()
                 print("Vous devez entrer un nom au tournoi")
         return nom_tournoi
     
@@ -103,9 +106,12 @@ class MenuTournoi:
         while lieu_valide == False:
             lieu = input("Où se déroule le tournoi ? \t")
             if lieu != "":
-                valid_location = True
+                lieu_valide = True
                 break
             else:
+                print()
+                print("... ERREUR ...")
+                print()
                 print("Vous devez entrer un nom de lieu")
         return lieu
     
@@ -120,6 +126,9 @@ class MenuTournoi:
                 liste_date.append(self.jour)
                 break
             else:
+                print()
+                print("... ERREUR ...")
+                print()
                 print("Vous devez entrer un nombre à 2 chiffres <= 31")
 
         mois_valide = False
@@ -130,6 +139,9 @@ class MenuTournoi:
                 liste_date.append(self.mois)
                 break
             else:
+                print()
+                print("... ERREUR ...")
+                print()
                 print("Vous devez entrer un nombre à 2 chiffres <= 12")
 
         annee_valid = False
@@ -140,6 +152,9 @@ class MenuTournoi:
                 liste_date.append(self.annee)
                 break
             else:
+                print()
+                print("... ERREUR ...")
+                print()
                 print("Veuillez entrer une année à 4 chiffres")
 
         return f"{liste_date[0]}/{liste_date[1]}/{liste_date[2]}"
@@ -163,6 +178,9 @@ class MenuTournoi:
                 temps_valide = True
                 break
             else:
+                print()
+                print("... ERREUR ...")
+                print()
                 print("Veuillez choisir le contrôle du temps.")
         return controle_temps
 
@@ -171,7 +189,7 @@ class MenuTournoi:
         return description
 
     def ajout_joueurs(self):
-        nom_tournoi = input("Dans quel tournoi voulez-vous ajouter des jours ? (nom du tournoi)\n")
+        nom_tournoi = input("Dans quel tournoi voulez-vous ajouter des joueurs ? (nom du tournoi)\n")
         return nom_tournoi
 
 
@@ -179,39 +197,6 @@ class MenuTournoi:
         print()
         print("Nous reprenons le tournoi en cours\n")
 
-    def afficher_informations_tournoi():
-        print()
-        print("Voici tous les tournois enregistrés : \n")
-
-    def menu_informations_tous_tournois():
-        choix_fini = False
-
-        while choix_fini == False:
-            print()
-            print("1/ Afficher tous les tournois \n"
-                  "2/ Choisir un tournoi \n"
-                  "3/ Retourner au Menu Principal \n")
-            choix = input("=>\t")
-            if choix == "1" or choix == "2" or choix == "3":
-                choix_fini == True
-                break
-
-        return choix
-
-    def menu_informations_un_tournoi(self):
-        choix_fini = False
-
-        while choix_fini == False:
-            print()
-            print(" 1/ Afficher les joueurs \n"
-                  " 2/ Afficher les tours \n"
-                  " 3/ Afficher les matchs \n"
-                  " 4/ Retour au Menu Principal \n")
-            choix = input("=>\t")
-            if choix == "1" or choix == "2" or choix == "3":
-                choix_fini == True
-                break
-        return choix
     
     def retour_menu_principal():
         print()
@@ -227,8 +212,67 @@ class MenuTempsPartie:
         choix = input("=>\t")
         return choix
 
-class MenuRapport:
-    pass
+class MenuRapportTournoi:
+    def afficher_menu_rapport_tournoi():
+        choix_valide = False
+        while choix_valide == False:
+            print()
+            print("1/ Voulez-vous afficher le rapport d'un tournoi ?\n"
+                  "2/ Voulez-vous afficher le rapport de tous les tournois\n" )
+            choix = input("=>\t")
+            if choix == "1" or choix == "2":
+                choix_valide = True
+                break
+        return choix
+
+    def afficher_un_tournoi():
+        print("#" * 37)
+        print("****** Voici le rapport du Tournoi ******") 
+        print("#" * 37)
+
+    def afficher_tous_tournois():
+        print("#" * 37)
+        print("****** Voici le rapport des Tournois ******") 
+        print("#" * 37)
+
+
+class MenuRapportJoueur:
+    def afficher_menu_rapport_joueur(self):
+        choix_valide = False
+        while choix_valide == False:
+            print()
+            print("1/ Voulez-vous afficher le rapport des joueurs par ordre alphabétique ?\n"
+                  "2/ Voulez-vous afficher le rapport des joueurs par ordre dans le classement mondial ?\n" 
+                  "3/ Voulez-vous afficher le rapport d'un seul joueur ?\n" )
+            choix = input("=>\t")
+            if choix == "1" or choix == "2" or choix == "3":
+                choix_valide = True
+                break
+            else:
+                print()
+                print(".... ERREUR ....")
+                print("Vous devez entrer un nombre entre 1 et 3")
+        return choix
+
+    def afficher_joueurs_orde_alphabetique(self):
+        print()
+        print("#" * 37)
+        print("****** Voici le rapport des joueurs par ordre alphabétique ******") 
+        print("#" * 37)
+
+    def afficher_joueurs_ordre_classement(self):
+        print()
+        print("#" * 37)
+        print("****** Voici le rapport des joueurs par ordre dans le classement mondial ******") 
+        print("#" * 37)
+
+    def afficher_un_joueur(self):
+        print()
+        print("#" * 37)
+        print("****** Voici le rapport du joueur selectionné ******") 
+        print("#" * 37)
+
+
 
 class MenuTour:
     def commencer_tour():
