@@ -2,7 +2,13 @@ from os import system, name
 
 
 class MenuPrincipal:
+    """
+    toutes les methodes en lien avec menu principal
+    """
     def afficher_menuprincipal(self):
+        """
+        affiche le menu principal
+        """
         print()
         print("#" * 37)
         print("*********  Menu Principal  **********")
@@ -11,6 +17,12 @@ class MenuPrincipal:
         print("***   Que souhaitez-vous faire ?  ***\n")
 
     def choix_menu_principal(self):
+        """
+        affiche les choix disponibles pour le menu principal
+
+        Returns:
+            str: recupere le choix 
+        """
         choix_fini = False
         while choix_fini == False:
             print()
@@ -34,7 +46,16 @@ class NettoyerEcran:
 
 
 class MenuJoueur:
+    """
+    toutes les methodes en lien avec le menu des joueurs
+    """
     def choix_menu_joueur(self):
+        """
+        affiche les choix disponibles pour le menu joueur
+
+        Returns:
+            str: recupere le choix
+        """
         choix_fini = False
         while choix_fini == False:
             print()
@@ -49,6 +70,9 @@ class MenuJoueur:
         return choix
 
     def ajout_joueur():
+        """
+        affiche la confirmation que le joueur a bien été ajouté
+        """
         print()
         print("..... CHARGEMENT .....")
         print()
@@ -58,7 +82,15 @@ class MenuJoueur:
 
 
 class MenuTournoi:
+    """
+    toutes les methodes en lien avec le menu du tournoi
+    """
     def choix_menu_tournoi():
+        """affiche les choix disponibles pour le menu tournoi
+
+        Returns:
+            str: recupere le choix
+        """
         choix_fini = False
         while choix_fini == False:
             print()
@@ -77,6 +109,12 @@ class MenuTournoi:
         return choix
 
     def ajout_infos_tournoi(self):
+        """
+        demande les informations a lors de la création d'un tournoi
+
+        Returns:
+            tableau: retourne un tableau avec toutes les informations demandées sur le tournoi
+        """
         print()
         print("Création d'un nouveau tournoi")
         print("*"*10 + " EN COURS " + "*"*10)
@@ -85,9 +123,15 @@ class MenuTournoi:
         date = self.ajout_date_tournoi()
         temps = self.ajout_controle_temps()
         description = self.ajout_description()
-        return nom, lieu, date, temps, description
+        return [nom, lieu, date, temps, description]
     
     def ajout_nom_tournoi(self):
+        """
+        demande un nom valide pour le tournoi
+
+        Returns:
+            str: nom du tournoi
+        """
         nom_valide = False
         while nom_valide == False:
             nom_tournoi = input("Quel est le nom du tournoi ? \t")
@@ -102,6 +146,12 @@ class MenuTournoi:
         return nom_tournoi
     
     def ajout_lieu(self):
+        """
+        demande un lieu valide pour le tournoi
+
+        Returns:
+            str: lieu du tournoi
+        """
         lieu_valide = False
         while lieu_valide == False:
             lieu = input("Où se déroule le tournoi ? \t")
@@ -116,6 +166,12 @@ class MenuTournoi:
         return lieu
     
     def ajout_date_tournoi(self):
+        """
+        demande la date du tournoi au format DD/MM/YYYY
+
+        Returns:
+            str: recupere la date du tournoi
+        """
         liste_date = []
 
         jour_valide = False
@@ -160,6 +216,13 @@ class MenuTournoi:
         return f"{liste_date[0]}/{liste_date[1]}/{liste_date[2]}"
 
     def ajout_controle_temps(self):
+        """
+        demande quel type de partie va être joué
+        pour connaitre le temps défini pour la partie
+
+        Returns:
+            str: retourne le nom du type de partie
+        """
         print("Choisissez le contrôle du temps:")
         temps_valide = False
         controle_temps = None
@@ -185,35 +248,53 @@ class MenuTournoi:
         return controle_temps
 
     def ajout_description(self):
+        """
+        demande la description du tournoi
+
+        Returns:
+            str: retourne la description du tournoi
+        """
         description = input("Entrer une description au tournoi :\t")
         return description
 
     def ajout_joueurs(self):
+        """demande le nom du tournoi dans lequel les joueurs vont être ajoutés
+
+        Returns:
+            str: nom du tournoi
+        """
         nom_tournoi = input("Dans quel tournoi voulez-vous ajouter des joueurs ? (nom du tournoi)\n")
         return nom_tournoi
 
 
     def continuer_tournoi():
+        """
+        averti que le tournoi reprend 
+        """
         print()
         print("Nous reprenons le tournoi en cours\n")
 
     
     def retour_menu_principal():
+        """
+        averti que nous sommes bien au menu principal
+        """
         print()
         print("Vous êtes de retour au menu principal !\n")
 
 
-class MenuTempsPartie:
-    def menu_temps_partie():
-        print()
-        print(" 1/ Bullet \n"
-              " 2/ Blitz \n"
-              " 3/ Coup rapide \n")
-        choix = input("=>\t")
-        return choix
 
 class MenuRapportTournoi:
+    """
+    toutes les methodes en lien avec les rapports des tournois
+    """
     def afficher_menu_rapport_tournoi():
+        """affiche le menu pour les rapports sur les tournois
+           et recupere le choix
+
+        Returns:
+            str: recupere le choix
+        """
         choix_valide = False
         while choix_valide == False:
             print()
@@ -226,18 +307,33 @@ class MenuRapportTournoi:
         return choix
 
     def afficher_un_tournoi():
+        """
+        affichage pour le rapport d'un seul tournoi
+        """
         print("#" * 37)
         print("****** Voici le rapport du Tournoi ******") 
         print("#" * 37)
 
     def afficher_tous_tournois():
+        """
+        affichage pour le rapport de plusieurs tournois
+        """
         print("#" * 37)
         print("****** Voici le rapport des Tournois ******") 
         print("#" * 37)
 
 
 class MenuRapportJoueur:
+    """
+    toutes les méthodes en lien avec les rapports des joueurs
+    """
     def afficher_menu_rapport_joueur(self):
+        """affiche le menu pour le menu des rapports sur les joueurs
+           et recupere le choix
+
+        Returns:
+            str: recupere le choix
+        """
         choix_valide = False
         while choix_valide == False:
             print()
@@ -255,18 +351,27 @@ class MenuRapportJoueur:
         return choix
 
     def afficher_joueurs_orde_alphabetique(self):
+        """
+        affichage pour le rapport des joueurs en ordre alphabétique
+        """
         print()
         print("#" * 37)
         print("****** Voici le rapport des joueurs par ordre alphabétique ******") 
         print("#" * 37)
 
     def afficher_joueurs_ordre_classement(self):
+        """
+        affichage pour le rapport des joueurs en ordre de classement mondial
+        """
         print()
         print("#" * 37)
         print("****** Voici le rapport des joueurs par ordre dans le classement mondial ******") 
         print("#" * 37)
 
     def afficher_un_joueur(self):
+        """
+        affichage pour le rapport d'un seul joueur séléctionné
+        """
         print()
         print("#" * 37)
         print("****** Voici le rapport du joueur selectionné ******") 
@@ -275,7 +380,16 @@ class MenuRapportJoueur:
 
 
 class MenuTour:
+    """
+    toutes les methodes en lien avec le menu des tours
+    """
     def commencer_tour():
+        """
+        demande si l'on doit commencer le tour ou non
+
+        Returns:
+            str: recupere le choix
+        """
         valid_tour = False
         while valid_tour == False:
             commencer = input("Voulez-vous commencer le tour ? (oui/non)\t")
@@ -292,6 +406,12 @@ class MenuTour:
         return commencer
 
     def finir_tour():
+        """
+        demande si le tour est terminé
+
+        Returns:
+            str: recupere le choix
+        """
         valid_tour = False
         while valid_tour == False:
             finir = input("Le Tour est-il terminé ? (oui/non)\t")

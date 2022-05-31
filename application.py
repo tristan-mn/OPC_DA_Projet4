@@ -15,7 +15,13 @@ import time
 
 
 class TournoiManager:
+    """
+    Cette classe permet de gérer toutes les méthodes en rapport avec un tournoi
+    """
     def __init__(self):
+        """
+        le constructeur du tournoi
+        """
         self.tournoi = None
         self.data = None
         #self.tournoi = Tournoi(*infos_tournoi, joueurs=self.ajout_joueurs())
@@ -27,6 +33,9 @@ class TournoiManager:
         # self.debut_tournoi = self.lancer_tournoi()
         
     def creer_tournoi(self):
+        """
+        création du tournoi 
+        """
         self.vue_tournoi = MenuTournoi()
         self.tournoi = Tournoi(*self.vue_tournoi.ajout_infos_tournoi())
         self.tournoi.add_to_database(self.tournoi.tournoi_serialized())
@@ -44,6 +53,7 @@ class TournoiManager:
     def ajout_joueurs(self):
         """
         Cette méthode permet de demander les informations sur chaque joueur participant au tournoi
+
         
         Returns:
             liste:  les informations de chaque joueur sont enregistrées sous forme de liste
@@ -152,9 +162,13 @@ class MatchManager:
         pass
 
     def creer_premiers_matchs(self, joueurs_triés):
-        """
-            Cette méthode permet de créer les 4 matchs pour le premier tour du tournoi suisse
+        """_summary_
 
+        Args:
+            joueurs_tri (_type_): _description_
+
+        Returns:
+            _type_: _description_
         """
         indice_premier_joueur = 7
         indice_joueur_milieu = 3
@@ -221,6 +235,11 @@ class MatchManager:
 
 class JoueurManager:
     def ajout_infos_joueur(self):
+        """cette fonction demande dans l'invite de commande les infos d'un joueur
+
+        Returns:
+            tableau: un tableau qui rassemble toutes les informations demandées dans les inputs
+        """
         prenom = self.ajout_prenom_joueur()
         nom = self.ajout_nom_joueur()
         date_naissance = self.ajout_date_naissance_joueur()
@@ -230,6 +249,11 @@ class JoueurManager:
     
 
     def ajout_prenom_joueur(self):
+        """demande le prenom du joueur
+
+        Returns:
+            str: prenom du joueur
+        """
         prenom_valide = False
         while prenom_valide == False:
             prenom_joueur = input("Quel est le prénom du joueur ?\t")
@@ -245,6 +269,11 @@ class JoueurManager:
                 
                 
     def ajout_nom_joueur(self):
+        """ demande le nom du joueur
+
+        Returns:
+            str: nom du joueur
+        """
         nom_valide = False
         while nom_valide == False:
             nom_joueur = input("Quel est le nom du joueur ?\t")
@@ -260,6 +289,11 @@ class JoueurManager:
                 
                 
     def ajout_date_naissance_joueur(self):
+        """demande la date de naissance du joueur
+
+        Returns:
+            str: date de naissance au format DD/MM/YYYY
+        """
         liste_date = []
         jour_valide = False
         
@@ -305,6 +339,11 @@ class JoueurManager:
         
         
     def ajout_sexe_joueur(self):
+        """ demande le sxe du joueur
+
+        Returns:
+            str: sexe du joueur au format M ou F
+        """
         sexe_valide = False
         while sexe_valide == False:
             sexe_joueur = input("Quel est son sexe ? (M/F)\t")
@@ -320,6 +359,11 @@ class JoueurManager:
     
     
     def ajout_classement_joueur(self):
+        """ demande le classement mondial du joueur
+
+        Returns:
+            int: retourne un nombre entre 1 et 100
+        """
         classement_valide = False
         while classement_valide == False:
             classement_joueur = int(input("Quel est le classement mondial du joueur ? (1 --> 100)\t"))
@@ -337,6 +381,14 @@ class JoueurManager:
 
 class RapportJoueurManager:
     def lancer_rapport(self):
+        """
+        lance rapport demandé en invite de commande
+
+        si le nombre 1 est choisi > on affiche tous les joueurs dans l'ordre alphabétique
+        si le nombre 2 est choisi > on affiche tous les joueurs dans l'ordre du classement mondial
+        si le nombre 3 est choisi > on affiche le joueur demandé
+        
+        """
         menu_rapport_joueur = MenuRapportJoueur()
         choix = menu_rapport_joueur.afficher_menu_rapport_joueur()
         if choix == "1":

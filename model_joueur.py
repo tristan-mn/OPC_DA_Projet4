@@ -22,7 +22,7 @@ class Joueur:
         self.id_joueur = id_joueur
         self.infos_joueur = [self.prenom, self.nom, self.date_naissance, self.sexe, self.classement, self.score, self.id_joueur]
     
-    
+
     def __call__(self):
         return self.infos_joueur
 
@@ -33,6 +33,13 @@ class Joueur:
 
     
     def serialized(self):
+        """
+        cette fonction récupère les informations du joueur à partir de l'instance du joueur
+        elle retourne ensuite  un dictionnaire avec toutes les informations du joueur
+
+        Returns:
+            dictionnaire: le dictionnaire retourné contient toutes les informations dérialisées pour un joueur
+        """
         infos_joueur = {}
         infos_joueur['prenom'] = self.prenom
         infos_joueur['nom'] = self.nom
@@ -42,14 +49,14 @@ class Joueur:
         infos_joueur['score'] = self.score
         return infos_joueur
 
-    def unserialized(self, joueur_serialized):
-        joueur_unserialized = Joueur(**joueur_serialized)
-        
-        return joueur_unserialized()
-
     
     def ajout_joueur_database(self, joueur):
-        # print(joueur.serialized())
+        """
+        Cette fonction permet d'ajouter un joueur avec  ses informations dans la base de données
+
+        Args:
+            joueur (dictionnaire): le dictionnaire contient les informations du joueur serialisées
+        """
         joueur_id = joueurs_database.insert(joueur)
         joueurs_database.update({'id du joueur': joueur_id}, doc_ids=[joueur_id])
 
