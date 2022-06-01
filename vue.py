@@ -265,6 +265,15 @@ class MenuTournoi:
         """
         nom_tournoi = input("Dans quel tournoi voulez-vous ajouter des joueurs ? (nom du tournoi)\n")
         return nom_tournoi
+    
+    def choix_tournoi():
+        choix_valide = False
+        while choix_valide == False:
+            choix = input("Quel est le nom du tournoi à lancer ?\t")
+            if choix != "":
+                choix_valide = True
+                break
+        return choix
 
 
     def continuer_tournoi():

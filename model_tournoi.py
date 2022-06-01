@@ -9,16 +9,17 @@ class Tournoi:
     classe modelisant un tournoi
 
     """
-    def __init__(self,nom ,lieu ,date ,temps , description, nombre_tours=4, joueurs=None, liste_tours=[]):
+    def __init__(self,nom ,lieu ,date ,temps , description, nombre_tours=4, joueurs=None, tours=[], tournoi_id=None):
         self.nom = nom
         self.lieu = lieu
         self.date = date
         self.temps = temps
         self.description = description
         self.nombre_tours = nombre_tours
-        self.liste_tours = liste_tours
+        self.tours = tours
         self.joueurs = joueurs
-        self.infos_tournoi = [self.nom, self.lieu, self.date, self.temps, self.description, self.nombre_tours, self.joueurs, self.liste_tours]
+        self.tournoi_id = tournoi_id
+        self.infos_tournoi = [self.nom, self.lieu, self.date, self.temps, self.description, self.nombre_tours, self.joueurs, self.tours]
 
     def __call__(self):
         return self.infos_tournoi
@@ -30,8 +31,8 @@ class Tournoi:
                f"date : {self.date} \n" \
                f"Système: {self.temps}\n" \
                f"Description :{self.description}\n" \
-               f"Joueurs : {'---'.join([str(j) for j in self.joueurs])}" \
-               f" {self.liste_tours}"
+               f" {self.tours}"
+               #f"Joueurs : {'---'.join([str(j) for j in self.joueurs])}" \
 
 
     def tournoi_serialized(self):
@@ -39,30 +40,19 @@ class Tournoi:
         infos_tournoi['nom'] = self.nom
         infos_tournoi['lieu'] = self.lieu
         infos_tournoi['date'] = self.date
-        infos_tournoi['controle du temps'] = self.temps
+        infos_tournoi['temps'] = self.temps
         infos_tournoi['description'] = self.description
-        infos_tournoi['nombre de tours'] = self.nombre_tours
+        infos_tournoi['nombre_tours'] = self.nombre_tours
         infos_tournoi["joueurs"] = self.joueurs
-        infos_tournoi["tours"] = self.liste_tours
-        #infos_tournoi["Id du tournoi"] = self.tournoi_id
+        infos_tournoi["tours"] = self.tours
         return infos_tournoi
-
-    def unserialized(self, tournoi_serialized):
-        nom = tournoi_serialized['nom']
-        lieu = tournoi_serialized['lieu']
-        date = tournoi_serialized['date']
-        temps = tournoi_serialized['controle du temps']
-        description = tournoi_serialized['description']
-        nombre_tours = tournoi_serialized['nombre de tours']
-        liste_tours = tournoi_serialized["tours"]
-        joueurs = tournoi_serialized["joueurs_id"]
-        #tournoi_id = tournoi_serialized["Id du tournoi"]
-
-        return Tournoi(nom, lieu, date, temps, description, nombre_tours, liste_tours, joueurs)
 
     def add_to_database(self, tournoi):
         tournoi_id = tournois_database.insert(tournoi)
-        tournois_database.update({"id du tournoi": tournoi_id}, doc_ids=[tournoi_id])
+        tournois_database.update({"tournoi_id": tournoi_id}, doc_ids=[tournoi_id])
+    
+    def update_tours(self, tour):
+        tournois_database.update({"tours": tour}, where("nom") == self.nom)
 
 
    # blitz = 10 min ou moins pour jouer l'ensemble des coups

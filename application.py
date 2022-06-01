@@ -1,20 +1,15 @@
-from multiprocessing.sharedctypes import Value
-from tkinter import Menu
-from unittest import result
-
 from tinydb import where
-from vue import MenuPrincipal, MenuRapportJoueur, MenuRapportTournoi, MenuTournoi, MenuJoueur , MenuTour
-from model_tournoi import Tournoi
+from vue import MenuRapportJoueur, MenuTournoi, MenuJoueur , MenuTour
+from model_tournoi import Tournoi , tournois_database
 from model_joueur import Joueur, joueurs_database
 from model_match import Match
 from model_tour import Tour
-from datetime import datetime
 from model_joueur import Joueur
 import time
 
 
 
-class TournoiManager:
+class TournoiManager():
     """
     Cette classe permet de gérer toutes les méthodes en rapport avec un tournoi
     """
@@ -87,8 +82,15 @@ class TournoiManager:
         Returns:
             tableau: les joueurs sont triés du rang le plus bas au plus élevé
         """
-        for joueur in self.tournoi.joueurs:
-            joueurs_triés = sorted(self.tournoi.joueurs, reverse=True, key=lambda joueur: joueur[4])
+        def joueurs_unserialized():
+            liste_joueurs = []
+            for joueur in self.tournoi.joueurs:
+                joueur_unserialized = Joueur(**joueur)
+                liste_joueurs.append(joueur_unserialized())
+            return liste_joueurs
+
+        
+        joueurs_triés = sorted(joueurs_unserialized(), reverse=True, key=lambda joueur: joueur[4])
         return joueurs_triés
     
 
@@ -106,7 +108,8 @@ class TournoiManager:
 
     def commencer_premier_tour(self):
         """
-        Cette méthode tri les joueurs en fonction de leurs classement mondial avant de créer les matchs
+        recupere le 'heure de début et de fin du tour
+        tri les joueurs en fonction de leurs classement mondial avant de créer les matchs
 
         Returns:
             liste: retourne une liste avec les informations du premier tour
@@ -118,9 +121,11 @@ class TournoiManager:
         matchs = MatchManager.creer_premiers_matchs(self, premier_tri)
         fin = MenuTour.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
-        self.tournoi.liste_tours.append(Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=matchs))
-
-        return matchs
+        resultat_premiers_matchs = MatchManager.resultat_match(self, matchs)
+        for match in resultat_premiers_matchs:
+            print(match)
+        premier_tour = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_premiers_matchs)
+        return premier_tour
 
 
     def commencer_tour_suivant(self):
@@ -134,26 +139,38 @@ class TournoiManager:
         matchs = MatchManager.creer_matchs_suivants(self, tri_suivant)
         fin = MenuTour.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
-        self.tournoi.liste_tours.append(Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=matchs))
-        return matchs
+        resultat_tour_suivant = MatchManager.resultat_match(self, matchs)
+        tour_suivant = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_tour_suivant)
+        return tour_suivant
 
         
-    def lancer_tournoi(self, tour):
+    def lancer_tournoi(self):
         """
         Cette méthode permet de lancer le tournoi Suisse
 
         """
+
+        # choix du tournoi 
+        gestion_tournoi = TournoiManager()
+        choix_tournoi = MenuTournoi.choix_tournoi()
+        tournoi = Tournoi(**tournois_database.get(where("nom") == choix_tournoi))
+        gestion_tournoi.tournoi = tournoi
+        print(gestion_tournoi.tournoi)
+        
         nb_tours_suivants = 3
         # modifier le nombre de tour à jouer en soustrayant le nombre de tours joués qui est en paramètre
-        premiers_matchs = self.commencer_premier_tour()
-        resultat_premiers_matchs = MatchManager.resultat_match(self,premiers_matchs)
-        self.tournoi.liste_tours.append(resultat_premiers_matchs)
-        print(resultat_premiers_matchs)
-        for tour in range(nb_tours_suivants):
-            matchs_suivants = self.commencer_tour_suivant()
-            print(matchs_suivants)
-            resultat_tour_suivant = MatchManager.resultat_match(self, matchs_suivants)
-            self.tournoi.liste_tours.append(resultat_tour_suivant)
+
+        #premier tour du tournoi
+        premier_tour = gestion_tournoi.commencer_premier_tour()
+        gestion_tournoi.tournoi.tours.append(premier_tour())
+        gestion_tournoi.tournoi.update_tours(premier_tour.serialized())
+        #print(resultat_premiers_matchs)
+        
+        # 3 derniers tours du tournoi
+        for i in range(nb_tours_suivants):
+            tour_suivant = gestion_tournoi.commencer_tour_suivant()
+            gestion_tournoi.tournoi.tours.append(tour_suivant())
+            gestion_tournoi.tournoi.update_tours(tour_suivant.serialized())
 
 
 
@@ -179,7 +196,7 @@ class MatchManager:
             un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_joueur_milieu])
             indice_premier_joueur-=1
             indice_joueur_milieu-=1
-            matchs.append(un_match())
+            matchs.append(un_match)
         return matchs
     
     def creer_matchs_suivants(self, joueurs_triés):
@@ -196,7 +213,7 @@ class MatchManager:
             un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_deuxieme_joueur])
             indice_premier_joueur-=2
             indice_deuxieme_joueur-=2
-            matchs.append(un_match())
+            matchs.append(un_match)
         return matchs
 
 
@@ -215,19 +232,37 @@ class MatchManager:
             print("Victoire > 1 point")
             print("Match nul > 0.5 point")
             print("Défaite > 0 point")
+            print()
             print(match)
-            print(f"quel est le score du joueur {match[0][0][0]} {match[0][0][1]}\t")
+            print
+            tableau_match = match()
+            joueur1 = tableau_match[0][0][0] + " " + tableau_match[0][0][1]
+            joueur2 = tableau_match[1][0][0] +  " " + tableau_match[1][0][1]
+            print(f"quel est le score du joueur {joueur1}\t")
             score_joueur1 = input("=>\t")
             # ajout des points dans le tuple du match
-            match[0][1] += float(score_joueur1)
+            tableau_match[0][1] += float(score_joueur1)
             # ajout des points dans la liste des infos du joueur
-            match[0][0][5] += float(score_joueur1)
-            print(f"quel est le score du joueur {match[1][0][0]} {match[1][0][1]}\t")
+            tableau_match[0][0][5] += float(score_joueur1)
+            print(f"quel est le score du joueur {joueur2}\t")
             score_joueur2 = input("=>\t")
             # ajout des points dans le tuple du match
-            match[1][1] += float(score_joueur2)
+            tableau_match[1][1] += float(score_joueur2)
             # ajout des points dans la liste des infos du joueur
-            match[1][0][5] += float(score_joueur2)
+            tableau_match[1][0][5] += float(score_joueur2)
+
+            if score_joueur1 == score_joueur2:
+                vainqueur = "C'est un match nul"
+
+            elif score_joueur1 > score_joueur2:
+                vainqueur = f"Le vainqueur est {joueur1} !"
+
+            elif score_joueur1 < score_joueur2:
+                vainqueur = f"Le vainqueur est {joueur2} !"
+            
+            print()
+            print(vainqueur)
+            print()
             
         return matchs    
 
@@ -339,7 +374,7 @@ class JoueurManager:
         
         
     def ajout_sexe_joueur(self):
-        """ demande le sxe du joueur
+        """ demande le sexe du joueur
 
         Returns:
             str: sexe du joueur au format M ou F
@@ -387,7 +422,7 @@ class RapportJoueurManager:
         si le nombre 1 est choisi > on affiche tous les joueurs dans l'ordre alphabétique
         si le nombre 2 est choisi > on affiche tous les joueurs dans l'ordre du classement mondial
         si le nombre 3 est choisi > on affiche le joueur demandé
-        
+
         """
         menu_rapport_joueur = MenuRapportJoueur()
         choix = menu_rapport_joueur.afficher_menu_rapport_joueur()
