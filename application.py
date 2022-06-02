@@ -1,5 +1,3 @@
-from re import A
-from turtle import update
 from tinydb import where
 from vue import MenuRapportJoueur, MenuTournoi, MenuJoueur , MenuTour
 from model_tournoi import Tournoi , tournois_database
@@ -180,6 +178,68 @@ class TournoiManager():
             tour_suivant = gestion_tournoi.commencer_tour_suivant()
             gestion_tournoi.tournoi.tours.append(tour_suivant)
             gestion_tournoi.tournoi.update_tours(gestion_tournoi.tournoi.tours)
+    
+    def modifier_tournoi(self):
+        menu_tournoi = MenuTournoi()
+        choix_valide = False
+        nom_tournoi = input("Quel tournoi voulez-vous modifier ?\t")
+        tournoi = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+        print()
+        print("Voici vôtre tournoi ")
+        print()
+        print(tournoi)
+        print("1/ nom \n"
+              "2/ lieu \n"
+              "3/ date \n"
+              "4/ temps \n"
+              "5/ description \n"
+              )
+        while choix_valide == False:
+            print()
+            choix_modification = input("Que voulez-vous modifier ?\t")
+            if choix_modification == "1":
+                nom = menu_tournoi.ajout_nom_tournoi()
+                tournois_database.update({"nom": nom}, where("nom") == nom_tournoi)
+                print()
+                print("**** modification réussie ****")
+                choix_valide = True
+
+            elif choix_modification == "2":
+                lieu = menu_tournoi.ajout_lieu()
+                tournois_database.update({"lieu": lieu}, where("nom") == nom_tournoi)
+                print() 
+                print("**** modification réussie ****")
+                choix_valide = True
+
+            elif choix_modification == "3":
+                date_tournoi = menu_tournoi.ajout_date_tournoi()
+                tournois_database.update({"date": date_tournoi}, where("nom") == nom_tournoi)
+                print()
+                print("**** modification réussie ****")
+                choix_valide = True
+                
+            elif choix_modification == "4":
+                temps = menu_tournoi.ajout_controle_temps()
+                tournois_database.update({"temps": temps}, where("nom") == nom_tournoi)
+                print()
+                print("**** modification réussie ****")
+                choix_valide = True
+
+            elif choix_modification == "5":
+                description = menu_tournoi.ajout_description()
+                tournois_database.update({"description": description}, where("nom") == nom_tournoi)
+                print()
+                print("**** modification réussie ****")
+                choix_valide = True
+
+            else:
+                print("ERREUR ! vous devez rentrer un nombre entre 1 et 5.")
+
+
+
+
+    def reprendre_tournoi(self):
+        choix_tournoi = input("Quel tournoi voulez-vous reprendre ?\t")
 
 
 

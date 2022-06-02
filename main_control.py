@@ -63,19 +63,16 @@ class TournoiMenuController(MenuPrincipalController):
                 self.controller_choisi = TournoiManager.ajout_joueurs(self)
 
             elif choix == "3":
-                pass
                 self.controller_choisi = TournoiManager.lancer_tournoi(self)
 
             elif choix == "4":
-                pass
-                # self.controller_choisi = modifier_tournoi
+                self.controller_choisi = TournoiManager.modifier_tournoi(self)
 
             elif choix == "5":
-                pass
-                # self.controller_choisi = reprendre_tournoi
+                self.controller_choisi = TournoiManager.reprendre_tournoi(self)
 
             elif choix == "6":
-                self.controller_choisi = RapportTournoiManager.lancer_rapport()
+                self.controller_choisi = RapportTournoiManager.lancer_rapport(self)
 
             elif choix == "7":
                 self.controller_choisi = MenuPrincipalController()
