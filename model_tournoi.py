@@ -1,4 +1,5 @@
 from textwrap import indent
+from turtle import update
 from tinydb import TinyDB, where
 
 tournois_database = TinyDB('tournois.json', indent=4)
@@ -9,16 +10,15 @@ class Tournoi:
     classe modelisant un tournoi
 
     """
-    def __init__(self,nom ,lieu ,date ,temps , description, nombre_tours=4, joueurs=None, tours=[], tournoi_id=None):
+    def __init__(self,nom ,lieu ,date ,temps , description, nombre_tours=4, joueurs=None,tours=None):
         self.nom = nom
         self.lieu = lieu
         self.date = date
         self.temps = temps
         self.description = description
         self.nombre_tours = nombre_tours
-        self.tours = tours
         self.joueurs = joueurs
-        self.tournoi_id = tournoi_id
+        self.tours = []
         self.infos_tournoi = [self.nom, self.lieu, self.date, self.temps, self.description, self.nombre_tours, self.joueurs, self.tours]
 
     def __call__(self):
@@ -31,7 +31,7 @@ class Tournoi:
                f"date : {self.date} \n" \
                f"Système: {self.temps}\n" \
                f"Description :{self.description}\n" \
-               f" {self.tours}"
+               #f" {self.tours}"
                #f"Joueurs : {'---'.join([str(j) for j in self.joueurs])}" \
 
 
@@ -48,8 +48,7 @@ class Tournoi:
         return infos_tournoi
 
     def add_to_database(self, tournoi):
-        tournoi_id = tournois_database.insert(tournoi)
-        tournois_database.update({"tournoi_id": tournoi_id}, doc_ids=[tournoi_id])
+        tournois_database.insert(tournoi)
     
     def update_tours(self, tour):
         tournois_database.update({"tours": tour}, where("nom") == self.nom)

@@ -1,3 +1,5 @@
+from re import A
+from turtle import update
 from tinydb import where
 from vue import MenuRapportJoueur, MenuTournoi, MenuJoueur , MenuTour
 from model_tournoi import Tournoi , tournois_database
@@ -101,8 +103,14 @@ class TournoiManager():
         Returns:
             tableau: les joueurs sont triés du nombre de points le plus faible au plus élevé
         """
-        for joueur in self.tournoi.joueurs:
-            joueurs_triés = sorted(self.tournoi.joueurs, key=lambda joueur: joueur[5])
+        def joueurs_unserialized():
+            liste_joueurs = []
+            for joueur in self.tournoi.joueurs:
+                joueur_unserialized = Joueur(**joueur)
+                liste_joueurs.append(joueur_unserialized())
+            return liste_joueurs
+        
+        joueurs_triés = sorted(joueurs_unserialized(), key=lambda joueur: joueur[5])
         return joueurs_triés
         
 
@@ -122,10 +130,9 @@ class TournoiManager():
         fin = MenuTour.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         resultat_premiers_matchs = MatchManager.resultat_match(self, matchs)
-        for match in resultat_premiers_matchs:
-            print(match)
-        premier_tour = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_premiers_matchs)
-        return premier_tour
+        premier_tour = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_premiers_matchs, numero_round=1)
+
+        return premier_tour()
 
 
     def commencer_tour_suivant(self):
@@ -140,8 +147,11 @@ class TournoiManager():
         fin = MenuTour.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         resultat_tour_suivant = MatchManager.resultat_match(self, matchs)
-        tour_suivant = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_tour_suivant)
-        return tour_suivant
+        
+        round_numero = 2
+        tour_suivant = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_tour_suivant, numero_round=round_numero)
+        round_numero+=1
+        return tour_suivant()
 
         
     def lancer_tournoi(self):
@@ -155,26 +165,25 @@ class TournoiManager():
         choix_tournoi = MenuTournoi.choix_tournoi()
         tournoi = Tournoi(**tournois_database.get(where("nom") == choix_tournoi))
         gestion_tournoi.tournoi = tournoi
-        print(gestion_tournoi.tournoi)
         
         nb_tours_suivants = 3
         # modifier le nombre de tour à jouer en soustrayant le nombre de tours joués qui est en paramètre
 
         #premier tour du tournoi
         premier_tour = gestion_tournoi.commencer_premier_tour()
-        gestion_tournoi.tournoi.tours.append(premier_tour())
-        gestion_tournoi.tournoi.update_tours(premier_tour.serialized())
-        #print(resultat_premiers_matchs)
+        gestion_tournoi.tournoi.tours.append(premier_tour)
+        gestion_tournoi.tournoi.update_tours(gestion_tournoi.tournoi.tours)
+        
         
         # 3 derniers tours du tournoi
         for i in range(nb_tours_suivants):
             tour_suivant = gestion_tournoi.commencer_tour_suivant()
-            gestion_tournoi.tournoi.tours.append(tour_suivant())
-            gestion_tournoi.tournoi.update_tours(tour_suivant.serialized())
+            gestion_tournoi.tournoi.tours.append(tour_suivant)
+            gestion_tournoi.tournoi.update_tours(gestion_tournoi.tournoi.tours)
 
 
 
-class MatchManager:
+class MatchManager(TournoiManager):
     def __init__(self):
         pass
 
@@ -190,10 +199,12 @@ class MatchManager:
         indice_premier_joueur = 7
         indice_joueur_milieu = 3
         nb_matchs = 4
+        match_numero = 1
         matchs = []
         
         for un_match in range(nb_matchs):
-            un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_joueur_milieu])
+            un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_joueur_milieu], numero=match_numero)
+            match_numero+=1
             indice_premier_joueur-=1
             indice_joueur_milieu-=1
             matchs.append(un_match)
@@ -207,10 +218,12 @@ class MatchManager:
         indice_premier_joueur = 7
         indice_deuxieme_joueur = 6
         nb_matchs = 4
+        match_numero = 1
         matchs = []
 
         for un_match in range(nb_matchs):
-            un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_deuxieme_joueur])
+            un_match = Match(joueur1=joueurs_triés[indice_premier_joueur],joueur2=joueurs_triés[indice_deuxieme_joueur], numero=match_numero)
+            match_numero+=1
             indice_premier_joueur-=2
             indice_deuxieme_joueur-=2
             matchs.append(un_match)
@@ -227,7 +240,7 @@ class MatchManager:
         Returns:
             list: liste des matchs avec les score mis à jour
         """
-
+        matchs_serialized = []
         for match in matchs:
             print("Victoire > 1 point")
             print("Match nul > 0.5 point")
@@ -235,36 +248,62 @@ class MatchManager:
             print()
             print(match)
             print
-            tableau_match = match()
-            joueur1 = tableau_match[0][0][0] + " " + tableau_match[0][0][1]
-            joueur2 = tableau_match[1][0][0] +  " " + tableau_match[1][0][1]
+
+            match_serialized = match.match_serialized()
+            
+            joueur1 = match_serialized["joueur1"][0] + " " + match_serialized["joueur1"][1]
+            joueur2 = match_serialized["joueur2"][0] +  " " + match_serialized["joueur2"][1]
+
             print(f"quel est le score du joueur {joueur1}\t")
             score_joueur1 = input("=>\t")
-            # ajout des points dans le tuple du match
-            tableau_match[0][1] += float(score_joueur1)
+            # ajout des points dans les infos du match
+            match_serialized["score_joueur1"] += float(score_joueur1)
             # ajout des points dans la liste des infos du joueur
-            tableau_match[0][0][5] += float(score_joueur1)
+            match_serialized["joueur1"][5] += float(score_joueur1)
+
+                
+
+
             print(f"quel est le score du joueur {joueur2}\t")
             score_joueur2 = input("=>\t")
-            # ajout des points dans le tuple du match
-            tableau_match[1][1] += float(score_joueur2)
+            # ajout des points dans les infos du match
+            match_serialized["score_joueur2"] += float(score_joueur2)
             # ajout des points dans la liste des infos du joueur
-            tableau_match[1][0][5] += float(score_joueur2)
+            match_serialized["joueur2"][5] += float(score_joueur2)
 
             if score_joueur1 == score_joueur2:
                 vainqueur = "C'est un match nul"
+                match_serialized["vainqueur"] = vainqueur
 
             elif score_joueur1 > score_joueur2:
                 vainqueur = f"Le vainqueur est {joueur1} !"
+                match_serialized["vainqueur"] = joueur1
 
             elif score_joueur1 < score_joueur2:
                 vainqueur = f"Le vainqueur est {joueur2} !"
+                match_serialized["vainqueur"] = joueur2
             
+            
+            matchs_serialized.append(match_serialized)
+
+            joueurs = tournois_database.get(where("nom") == self.tournoi.nom)["joueurs"]
+            
+            for joueur in joueurs:
+                if joueur.get("prenom") == match_serialized["joueur1"][0] and joueur.get("nom") == match_serialized["joueur1"][1]:
+                    joueur.update({"score": match_serialized["joueur1"][5]})
+                elif joueur.get("prenom") == match_serialized["joueur2"][0] and joueur.get("nom") == match_serialized["joueur2"][1]:
+                    joueur.update({"score": match_serialized["joueur2"][5]})
+                else:
+                    pass
+
+            tournois_database.update({"joueurs": joueurs}, where("nom") == self.tournoi.nom)
+
             print()
             print(vainqueur)
             print()
+        
             
-        return matchs    
+        return matchs_serialized    
 
 
 

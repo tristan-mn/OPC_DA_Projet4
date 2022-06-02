@@ -11,7 +11,7 @@ class Joueur:
     Classe modélisant un joueur du tournoi
 
     """
-    def __init__(self, prenom=None, nom=None, date_naissance=None, sexe=None, classement=0, score=0, id_joueur=None):
+    def __init__(self, prenom=None, nom=None, date_naissance=None, sexe=None, classement=0, score=0):
                   
         self.prenom = prenom
         self.nom = nom
@@ -19,8 +19,7 @@ class Joueur:
         self.sexe = sexe
         self.classement = classement
         self.score = score
-        self.id_joueur = id_joueur
-        self.infos_joueur = [self.prenom, self.nom, self.date_naissance, self.sexe, self.classement, self.score, self.id_joueur]
+        self.infos_joueur = [self.prenom, self.nom, self.date_naissance, self.sexe, self.classement, self.score]
     
 
     def __call__(self):
@@ -57,8 +56,7 @@ class Joueur:
         Args:
             joueur (dictionnaire): le dictionnaire contient les informations du joueur serialisées
         """
-        joueur_id = joueurs_database.insert(joueur)
-        joueurs_database.update({'id du joueur': joueur_id}, doc_ids=[joueur_id])
+        joueurs_database.insert(joueur)
 
     def ajout_tournoi_database(self, tournoi, joueurs):
         tournois_database.update({"joueurs": joueurs}, where("nom") == tournoi)

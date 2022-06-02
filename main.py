@@ -1,8 +1,8 @@
-from vue import MenuPrincipal
+import main_control
 
 def main():
-    pass
-    
+    demarrer = main_control.MenuPrincipalController()
+    demarrer()
 
 
 if __name__ == "__main__":
