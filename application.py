@@ -1,5 +1,5 @@
 from tinydb import where
-from vue import MenuRapportJoueur, MenuTournoi, MenuJoueur , MenuTour
+from vue import MenuRapportJoueur, MenuRapportTournoi, MenuTournoi, MenuJoueur , MenuTour
 from model_tournoi import Tournoi , tournois_database
 from model_joueur import Joueur, joueurs_database
 from model_match import Match
@@ -19,13 +19,7 @@ class TournoiManager():
         """
         self.tournoi = None
         self.data = None
-        #self.tournoi = Tournoi(*infos_tournoi, joueurs=self.ajout_joueurs())
     
-    def __call__(self):
-        pass
-        # self.infos_tournoi = self.vue_tournoi.ajout_infos_tournoi()
-        # self.tournoi = Tournoi(*self.infos_tournoi)
-        # self.debut_tournoi = self.lancer_tournoi()
         
     def creer_tournoi(self):
         """
@@ -34,16 +28,6 @@ class TournoiManager():
         self.vue_tournoi = MenuTournoi()
         self.tournoi = Tournoi(*self.vue_tournoi.ajout_infos_tournoi())
         self.tournoi.add_to_database(self.tournoi.tournoi_serialized())
-
-    def modifier_tournoi(self):
-        pass
-
-    def afficher_tournoi(self):
-        """
-        Cette méthode affiche les information du tournoi en cours
-
-        """
-        print(self.tournoi)
 
     def ajout_joueurs(self):
         """
@@ -120,36 +104,37 @@ class TournoiManager():
         Returns:
             liste: retourne une liste avec les informations du premier tour
         """
-
-        debut = MenuTour.commencer_tour()
+        menu = MenuTour()
+        debut = menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         premier_tri = self.tri_joueurs_classement_mondial()
         matchs = MatchManager.creer_premiers_matchs(self, premier_tri)
-        fin = MenuTour.finir_tour()
+        fin = menu.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         resultat_premiers_matchs = MatchManager.resultat_match(self, matchs)
         premier_tour = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_premiers_matchs, numero_round=1)
 
-        return premier_tour()
+        return premier_tour.serialized()
 
 
-    def commencer_tour_suivant(self):
+    def commencer_tour_suivant(self, round_numero):
         """ Cette méthode tri les joueurs en fonction de leurs points accumulés durant le tournoi avant de créer les matchs
         Returns:
             liste: retourne une liste de matchs
         """
-        debut = MenuTour.commencer_tour()
+        menu = MenuTour()
+        debut = menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         tri_suivant = self.tri_joueurs_points_tournoi()
         matchs = MatchManager.creer_matchs_suivants(self, tri_suivant)
-        fin = MenuTour.finir_tour()
+        fin = menu.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         resultat_tour_suivant = MatchManager.resultat_match(self, matchs)
         
-        round_numero = 2
+        
         tour_suivant = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_tour_suivant, numero_round=round_numero)
         round_numero+=1
-        return tour_suivant()
+        return tour_suivant.serialized()
 
         
     def lancer_tournoi(self):
@@ -171,13 +156,16 @@ class TournoiManager():
         premier_tour = gestion_tournoi.commencer_premier_tour()
         gestion_tournoi.tournoi.tours.append(premier_tour)
         gestion_tournoi.tournoi.update_tours(gestion_tournoi.tournoi.tours)
+        gestion_tournoi.tournoi.nombre_tours-=1
         
         
         # 3 derniers tours du tournoi
+        numero_round = 2
         for i in range(nb_tours_suivants):
-            tour_suivant = gestion_tournoi.commencer_tour_suivant()
+            tour_suivant = gestion_tournoi.commencer_tour_suivant(numero_round=numero_round)
             gestion_tournoi.tournoi.tours.append(tour_suivant)
             gestion_tournoi.tournoi.update_tours(gestion_tournoi.tournoi.tours)
+            gestion_tournoi.tournoi.nombre_tours-=1
     
     def modifier_tournoi(self):
         menu_tournoi = MenuTournoi()
@@ -239,7 +227,30 @@ class TournoiManager():
 
 
     def reprendre_tournoi(self):
-        choix_tournoi = input("Quel tournoi voulez-vous reprendre ?\t")
+        gestion_tournoi = TournoiManager()
+        choix_valide = False
+        while choix_valide == False:
+
+            nom_tournoi = input("Quel tournoi voulez-vous reprendre ?\t")
+            gestion_tournoi.tournoi = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+
+            nb_tours_suivants = gestion_tournoi.tournoi.nombre_tours
+
+            if nb_tours_suivants == 4:
+                print()
+                print("Nous vous informons que ce tournoi n'a pas encore commencé")
+                print()
+                print("Veuillez confirmer le nom du tournoi s'il vous plaît")
+                print()
+                gestion_tournoi.lancer_tournoi()
+
+            else:
+                for i in range(nb_tours_suivants):
+                    tour_suivant = gestion_tournoi.commencer_tour_suivant()
+                    gestion_tournoi.tournoi.tours.append(tour_suivant)
+                    gestion_tournoi.tournoi.update_tours(gestion_tournoi.tournoi.tours)
+                    gestion_tournoi.tournoi.nombre_tours=-1
+            
 
 
 
@@ -563,4 +574,245 @@ class RapportJoueurManager:
 
 class RapportTournoiManager:
     def lancer_rapport(self):
-        pass
+        menu_rapport_tournoi = MenuRapportTournoi()
+        choix = menu_rapport_tournoi.afficher_menu_rapport_tournoi()
+        if choix == "1":
+            print()
+            nom_tournoi = input("Vous voulez la liste des joueurs de quel tournoi ?\t")
+            print()
+            tournoi_unserialized = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+            joueurs = tournoi_unserialized.joueurs
+
+            choix_valide = False
+            while choix_valide == False:
+                menu_tri = print("1/ trier les joueurs par ordre alphabétique\n"
+                                 "2/ trier les joueurs par classement mondial\n")
+                print()
+                choix_tri = input("=>\t")
+
+                if choix_tri == "1":
+                    choix_valide = True
+                    joueurs_tri_alphabetique = sorted(joueurs, key=lambda joueur:joueur['nom'])
+                    tournoi_unserialized.joueurs = []
+                    for joueur in joueurs_tri_alphabetique:
+                        joueur_serialized = Joueur(**joueur)
+                        tournoi_unserialized.joueurs.append(joueur_serialized)
+
+                elif choix_tri == "2":
+                    choix_valide = True
+                    joueurs_tri_score = sorted(joueurs, key=lambda joueur: joueur['classement'])
+                    tournoi_unserialized.joueurs = []
+                    for joueur in joueurs_tri_score:
+                        joueur_serialized = Joueur(**joueur)
+                        tournoi_unserialized.joueurs.append(joueur_serialized)
+
+            tournoi_unserialized.afficher_joueurs()
+
+        elif choix == "2":
+            # tous les tournois
+            tournois_unserialized = []
+            tournois = tournois_database.all()
+
+            for tournoi in tournois:
+                tournoi_unserialized = Tournoi(**tournoi)
+                joueurs = tournoi_unserialized.joueurs
+                tournoi_unserialized.joueurs = []
+                for joueur in joueurs:
+                    joueur_serialized = Joueur(**joueur)
+                    tournoi_unserialized.joueurs.append(joueur_serialized)
+                tournois_unserialized.append(tournoi_unserialized)
+            
+            for tournoi in tournois_unserialized:
+                tournoi.afficher_tournoi()
+
+        elif choix == "3":
+            print()
+            nom_tournoi = input("Vous voulez la liste des tours de quel tournoi ?\t")
+            print()
+            tournoi_unserialized = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+            tours = tournoi_unserialized.tours
+            tournoi_unserialized.tours = []
+            
+            nb = 1
+            for tour in tours:
+                tour_serialized = Tour(**tour, numero_round=nb)
+                nb+=1
+                tournoi_unserialized.tours.append(tour_serialized)
+            
+            tournoi_unserialized.afficher_tours()
+            # tous les tours d'un tournoi
+
+        elif choix == "4":
+            print()
+            nom_tournoi = input("Vous voulez la liste des matchs de quel tournoi ?\t")
+            print()
+            tournoi_unserialized = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+            tours = tournoi_unserialized.tours
+            tournoi_unserialized.tours = []
+            
+            for tour in tours:
+                tour_serialized = Tour(**tour)
+                tournoi_unserialized.tours.append(tour_serialized)
+            
+            tournoi_unserialized.afficher_matchs()
+                
+            # tous les matchs d'un tournoi
+
+class ModifierJoueur(JoueurManager):
+    def __init__(self):
+        self.tournoi = None
+        self.joueur = None
+        self.joueurs_tournoi = None
+        
+    def __call__(self):
+        choix_joueur = self.choix_joueur()
+        modification = self.choix_modification()
+
+    def choix_joueur(self):
+        print()
+        prenom_joueur = input("Quel est le prenom du joueur à modifier?\t")
+        nom_joueur = input("Quel est le nom du joueur à modifier?\t")
+        print()
+
+        choix_tournoi = input("Dans quel tournoi se trouve le joueur?\t")
+        self.tournoi = tournois_database.get(where("nom") == choix_tournoi)
+        self.joueurs_tournoi = self.tournoi["joueurs"]
+
+        def chercher(joueurs):
+            for joueur in joueurs:
+                if joueur["prenom"] == prenom_joueur and joueur["nom"] == nom_joueur:
+                    print("\nVoici le joueur demandé:\n")
+                    afficher = print(Joueur(**joueur))
+                    return joueur
+            print("le joueur ne fait pas partie du tournoi")
+
+        self.joueur = chercher(joueurs=self.joueurs_tournoi)
+
+
+    def choix_modification(self):
+        choix_valid = False
+        while choix_valid ==False:
+            print("1/ Prenom\n"
+                  "2/ Nom\n"
+                  "3/ date de naissance\n"
+                  "4/ sexe\n"
+                  "5/ classement\n")
+
+            choix = input("Que voulez-vous modifier concernant le joueur ?\t")
+
+            if choix == "1":
+                self.modifier_prenom()
+                choix_valid = True
+
+            elif choix == "2":
+                self.modifier_nom()
+                choix_valid = True
+
+            elif choix == "3":
+                self.modifier_date_naissance()
+                choix_valid = True
+
+            elif choix == "4":
+                self.modifier_sexe()
+                choix_valid = True
+
+            elif choix == "5":
+                self.modifier_classement()
+                choix_valid = True
+
+            else:
+                print("\nERREUR: vous devez rentrer un nombre entre 1 et 5.\n")
+
+    def modifier_prenom(self):
+        print("\nVoici l'ancien prenom:\n")
+        print(self.joueur["prenom"])
+
+        ancien_joueur = self.joueur
+        nouveau_prenom = self.ajout_prenom_joueur()
+        
+
+        for joueur in self.joueurs_tournoi:
+            if joueur == ancien_joueur:
+                joueur["prenom"] = nouveau_prenom
+        
+        tournois_database.update({"joueurs": self.joueurs_tournoi}, where("nom") == self.tournoi["nom"])
+
+        print("...")
+        time.sleep(2)
+        print("Bavo ! Le joueur à bien été modifié !")
+
+        
+
+
+
+    def modifier_nom(self):
+        print("\nVoici l'ancien nom:\n")
+        print(self.joueur["nom"])
+
+        ancien_joueur = self.joueur
+        nouveau_nom = self.ajout_nom_joueur()
+        
+
+        for joueur in self.joueurs_tournoi:
+            if joueur == ancien_joueur:
+                joueur["nom"] = nouveau_nom
+        
+        tournois_database.update({"joueurs": self.joueurs_tournoi}, where("nom") == self.tournoi["nom"])
+
+        print("...")
+        time.sleep(2)
+        print("Bavo ! Le joueur à bien été modifié !")
+
+    def modifier_date_naissance(self):
+        print("\nVoici l'ancienne date de naissance:\n")
+        print(self.joueur["date_naissance"])
+
+        ancien_joueur = self.joueur
+        nouvelle_date = self.ajout_date_naissance_joueur()
+        
+
+        for joueur in self.joueurs_tournoi:
+            if joueur == ancien_joueur:
+                joueur["date_naissance"] = nouvelle_date
+        
+        tournois_database.update({"joueurs": self.joueurs_tournoi}, where("nom") == self.tournoi["nom"])
+
+        print("...")
+        time.sleep(2)
+        print("Bavo ! Le joueur à bien été modifié !")
+
+    def modifier_sexe(self):
+        print("\nVoici l'ancien sexe:\n")
+        print(self.joueur["sexe"])
+
+        ancien_joueur = self.joueur
+        nouveau_sexe = self.ajout_sexe_joueur()
+        
+
+        for joueur in self.joueurs_tournoi:
+            if joueur == ancien_joueur:
+                joueur["sexe"] = nouveau_sexe
+        
+        tournois_database.update({"joueurs": self.joueurs_tournoi}, where("nom") == self.tournoi["nom"])
+
+        print("...")
+        time.sleep(2)
+        print("Bavo ! Le joueur à bien été modifié !")
+        
+    def modifier_classement(self):
+        print("\nVoici l'ancien classement:\n")
+        print(self.joueur["classement"])
+
+        ancien_joueur = self.joueur
+        nouveau_classement = self.ajout_classement_joueur()
+        
+
+        for joueur in self.joueurs_tournoi:
+            if joueur == ancien_joueur:
+                joueur["classement"] = nouveau_classement
+        
+        tournois_database.update({"joueurs": self.joueurs_tournoi}, where("nom") == self.tournoi["nom"])
+
+        print("...")
+        time.sleep(2)
+        print("Bavo ! Le joueur à bien été modifié !")

@@ -1,7 +1,4 @@
-from textwrap import indent
-import time
 from model_tournoi import tournois_database
-
 from tinydb import TinyDB, where
 
 joueurs_database = TinyDB('joueurs.json', indent=4)
@@ -27,8 +24,12 @@ class Joueur:
 
 
     def __str__(self):
-        return f"\nNom: {self.nom}\nPrénom: {self.prenom}\ndate de naissance: {self.date_naissance}\nSexe: {self.sexe}" \
-   		       f"\nClassement mondial: {self.classement}\nScore: {self.score}\n"
+        return f"Nom: {self.nom}\n" \
+               f"Prénom: {self.prenom}\n" \
+               f"date de naissance: {self.date_naissance}\n" \
+               f"Sexe: {self.sexe}\n" \
+   		       f"Classement mondial: {self.classement}\n" \
+               f"Score: {self.score}\n"
 
     
     def serialized(self):
@@ -60,5 +61,3 @@ class Joueur:
 
     def ajout_tournoi_database(self, tournoi, joueurs):
         tournois_database.update({"joueurs": joueurs}, where("nom") == tournoi)
-        
-        #time.sleep(2)

@@ -14,7 +14,7 @@
                     "date_naissance": "30/04/1995",
                     "sexe": "M",
                     "classement": 1,
-                    "score": 31.0
+                    "score": 99.0
                 },
                 {
                     "prenom": "enzo",
@@ -30,7 +30,7 @@
                     "date_naissance": "25/11/2022",
                     "sexe": "M",
                     "classement": 3,
-                    "score": 41.0
+                    "score": 0.0
                 },
                 {
                     "prenom": "armelle",
@@ -38,7 +38,7 @@
                     "date_naissance": "11/05/1976",
                     "sexe": "F",
                     "classement": 4,
-                    "score": 19.0
+                    "score": 0.0
                 },
                 {
                     "prenom": "assiah",
@@ -46,7 +46,7 @@
                     "date_naissance": "02/05/2021",
                     "sexe": "F",
                     "classement": 5,
-                    "score": 91.0
+                    "score": 0.0
                 },
                 {
                     "prenom": "ghizlane",
@@ -54,7 +54,7 @@
                     "date_naissance": "25/09/1995",
                     "sexe": "F",
                     "classement": 6,
-                    "score": 81.0
+                    "score": 11.0
                 },
                 {
                     "prenom": "annick",
@@ -62,7 +62,7 @@
                     "date_naissance": "25/11/1952",
                     "sexe": "F",
                     "classement": 7,
-                    "score": 114.0
+                    "score": 11.0
                 },
                 {
                     "prenom": "david",
@@ -70,15 +70,15 @@
                     "date_naissance": "18/03/1976",
                     "sexe": "M",
                     "classement": 8,
-                    "score": 66.0
+                    "score": 0.0
                 }
             ],
             "tours": [
-                [
-                    "Round 1",
-                    "02/06/2022 - 16h40m01s",
-                    "02/06/2022 - 16h40m03s",
-                    [
+                {
+                    "nom": "Round 1",
+                    "date_heure_debut": "04/06/2022 - 16h25m14s",
+                    "date_heure_fin": "04/06/2022 - 16h25m15s",
+                    "liste_matchs": [
                         {
                             "nom": "Match 1",
                             "joueur1": [
@@ -87,111 +87,16 @@
                                 "30/04/1995",
                                 "M",
                                 1,
-                                31.0
+                                1.0
                             ],
-                            "score_joueur1": 11.0,
+                            "score_joueur1": 1.0,
                             "joueur2": [
                                 "assiah",
                                 "montemitro",
                                 "02/05/2021",
                                 "F",
                                 5,
-                                90.0
-                            ],
-                            "score_joueur2": 1.0,
-                            "vainqueur": "tristan montemitro"
-                        },
-                        {
-                            "nom": "Match 2",
-                            "joueur1": [
-                                "enzo",
-                                "montemitro",
-                                "11/02/2002",
-                                "M",
-                                2,
                                 2.0
-                            ],
-                            "score_joueur1": 1.0,
-                            "joueur2": [
-                                "ghizlane",
-                                "el amraoui",
-                                "25/09/1995",
-                                "F",
-                                6,
-                                91.0
-                            ],
-                            "score_joueur2": 12.0,
-                            "vainqueur": "ghizlane el amraoui"
-                        },
-                        {
-                            "nom": "Match 3",
-                            "joueur1": [
-                                "gianni",
-                                "montemitro",
-                                "25/11/2022",
-                                "M",
-                                3,
-                                19.0
-                            ],
-                            "score_joueur1": 1.0,
-                            "joueur2": [
-                                "annick",
-                                "maillon",
-                                "25/11/1952",
-                                "F",
-                                7,
-                                128.0
-                            ],
-                            "score_joueur2": 15.0,
-                            "vainqueur": "annick maillon"
-                        },
-                        {
-                            "nom": "Match 4",
-                            "joueur1": [
-                                "armelle",
-                                "magnier",
-                                "11/05/1976",
-                                "F",
-                                4,
-                                62.0
-                            ],
-                            "score_joueur1": 43.0,
-                            "joueur2": [
-                                "david",
-                                "montemitro",
-                                "18/03/1976",
-                                "M",
-                                8,
-                                67.0
-                            ],
-                            "score_joueur2": 1.0,
-                            "vainqueur": "armelle magnier"
-                        }
-                    ]
-                ],
-                [
-                    "Round 2",
-                    "02/06/2022 - 16h40m36s",
-                    "02/06/2022 - 16h40m40s",
-                    [
-                        {
-                            "nom": "Match 1",
-                            "joueur1": [
-                                "annick",
-                                "maillon",
-                                "25/11/1952",
-                                "F",
-                                7,
-                                114.0
-                            ],
-                            "score_joueur1": 1.0,
-                            "joueur2": [
-                                "assiah",
-                                "montemitro",
-                                "02/05/2021",
-                                "F",
-                                5,
-                                91.0
                             ],
                             "score_joueur2": 2.0,
                             "vainqueur": "assiah montemitro"
@@ -199,59 +104,6 @@
                         {
                             "nom": "Match 2",
                             "joueur1": [
-                                "ghizlane",
-                                "el amraoui",
-                                "25/09/1995",
-                                "F",
-                                6,
-                                81.0
-                            ],
-                            "score_joueur1": 2.0,
-                            "joueur2": [
-                                "david",
-                                "montemitro",
-                                "18/03/1976",
-                                "M",
-                                8,
-                                66.0
-                            ],
-                            "score_joueur2": 0.0,
-                            "vainqueur": "ghizlane el amraoui"
-                        },
-                        {
-                            "nom": "Match 3",
-                            "joueur1": [
-                                "tristan",
-                                "montemitro",
-                                "30/04/1995",
-                                "M",
-                                1,
-                                31.0
-                            ],
-                            "score_joueur1": 11.0,
-                            "joueur2": [
-                                "armelle",
-                                "magnier",
-                                "11/05/1976",
-                                "F",
-                                4,
-                                19.0
-                            ],
-                            "score_joueur2": 0.0,
-                            "vainqueur": "tristan montemitro"
-                        },
-                        {
-                            "nom": "Match 4",
-                            "joueur1": [
-                                "gianni",
-                                "montemitro",
-                                "25/11/2022",
-                                "M",
-                                3,
-                                41.0
-                            ],
-                            "score_joueur1": 23.0,
-                            "joueur2": [
                                 "enzo",
                                 "montemitro",
                                 "11/02/2002",
@@ -259,11 +111,349 @@
                                 2,
                                 1.0
                             ],
-                            "score_joueur2": 0.0,
-                            "vainqueur": "gianni montemitro"
+                            "score_joueur1": 1.0,
+                            "joueur2": [
+                                "ghizlane",
+                                "el amraoui",
+                                "25/09/1995",
+                                "F",
+                                6,
+                                2.0
+                            ],
+                            "score_joueur2": 2.0,
+                            "vainqueur": "ghizlane el amraoui"
+                        },
+                        {
+                            "nom": "Match 3",
+                            "joueur1": [
+                                "gianni",
+                                "montemitro",
+                                "25/11/2022",
+                                "M",
+                                3,
+                                1.0
+                            ],
+                            "score_joueur1": 1.0,
+                            "joueur2": [
+                                "annick",
+                                "maillon",
+                                "25/11/1952",
+                                "F",
+                                7,
+                                1.0
+                            ],
+                            "score_joueur2": 1.0,
+                            "vainqueur": "C'est un match nul"
+                        },
+                        {
+                            "nom": "Match 4",
+                            "joueur1": [
+                                "armelle",
+                                "magnier",
+                                "11/05/1976",
+                                "F",
+                                4,
+                                1.0
+                            ],
+                            "score_joueur1": 1.0,
+                            "joueur2": [
+                                "david",
+                                "montemitro",
+                                "18/03/1976",
+                                "M",
+                                8,
+                                22.0
+                            ],
+                            "score_joueur2": 22.0,
+                            "vainqueur": "david montemitro"
                         }
                     ]
-                ]
+                },
+                {
+                    "nom": "Round 2",
+                    "date_heure_debut": "04/06/2022 - 16h25m25s",
+                    "date_heure_fin": "04/06/2022 - 16h25m26s",
+                    "liste_matchs": [
+                        {
+                            "nom": "Match 1",
+                            "joueur1": [
+                                "david",
+                                "montemitro",
+                                "18/03/1976",
+                                "M",
+                                8,
+                                9.0
+                            ],
+                            "score_joueur1": 9.0,
+                            "joueur2": [
+                                "annick",
+                                "maillon",
+                                "25/11/1952",
+                                "F",
+                                7,
+                                12.0
+                            ],
+                            "score_joueur2": 12.0,
+                            "vainqueur": "david montemitro"
+                        },
+                        {
+                            "nom": "Match 2",
+                            "joueur1": [
+                                "ghizlane",
+                                "el amraoui",
+                                "25/09/1995",
+                                "F",
+                                6,
+                                2.0
+                            ],
+                            "score_joueur1": 2.0,
+                            "joueur2": [
+                                "assiah",
+                                "montemitro",
+                                "02/05/2021",
+                                "F",
+                                5,
+                                0.0
+                            ],
+                            "score_joueur2": 0.0,
+                            "vainqueur": "ghizlane el amraoui"
+                        },
+                        {
+                            "nom": "Match 3",
+                            "joueur1": [
+                                "armelle",
+                                "magnier",
+                                "11/05/1976",
+                                "F",
+                                4,
+                                22.0
+                            ],
+                            "score_joueur1": 22.0,
+                            "joueur2": [
+                                "gianni",
+                                "montemitro",
+                                "25/11/2022",
+                                "M",
+                                3,
+                                0.0
+                            ],
+                            "score_joueur2": 0.0,
+                            "vainqueur": "armelle magnier"
+                        },
+                        {
+                            "nom": "Match 4",
+                            "joueur1": [
+                                "enzo",
+                                "montemitro",
+                                "11/02/2002",
+                                "M",
+                                2,
+                                11.0
+                            ],
+                            "score_joueur1": 11.0,
+                            "joueur2": [
+                                "tristan",
+                                "montemitro",
+                                "30/04/1995",
+                                "M",
+                                1,
+                                99.0
+                            ],
+                            "score_joueur2": 99.0,
+                            "vainqueur": "tristan montemitro"
+                        }
+                    ]
+                },
+                {
+                    "nom": "Round 2",
+                    "date_heure_debut": "04/06/2022 - 16h25m43s",
+                    "date_heure_fin": "04/06/2022 - 16h25m46s",
+                    "liste_matchs": [
+                        {
+                            "nom": "Match 1",
+                            "joueur1": [
+                                "david",
+                                "montemitro",
+                                "18/03/1976",
+                                "M",
+                                8,
+                                1.0
+                            ],
+                            "score_joueur1": 1.0,
+                            "joueur2": [
+                                "annick",
+                                "maillon",
+                                "25/11/1952",
+                                "F",
+                                7,
+                                2.0
+                            ],
+                            "score_joueur2": 2.0,
+                            "vainqueur": "annick maillon"
+                        },
+                        {
+                            "nom": "Match 2",
+                            "joueur1": [
+                                "ghizlane",
+                                "el amraoui",
+                                "25/09/1995",
+                                "F",
+                                6,
+                                1.0
+                            ],
+                            "score_joueur1": 1.0,
+                            "joueur2": [
+                                "assiah",
+                                "montemitro",
+                                "02/05/2021",
+                                "F",
+                                5,
+                                11.0
+                            ],
+                            "score_joueur2": 11.0,
+                            "vainqueur": "assiah montemitro"
+                        },
+                        {
+                            "nom": "Match 3",
+                            "joueur1": [
+                                "armelle",
+                                "magnier",
+                                "11/05/1976",
+                                "F",
+                                4,
+                                1.0
+                            ],
+                            "score_joueur1": 1.0,
+                            "joueur2": [
+                                "gianni",
+                                "montemitro",
+                                "25/11/2022",
+                                "M",
+                                3,
+                                1.0
+                            ],
+                            "score_joueur2": 1.0,
+                            "vainqueur": "C'est un match nul"
+                        },
+                        {
+                            "nom": "Match 4",
+                            "joueur1": [
+                                "enzo",
+                                "montemitro",
+                                "11/02/2002",
+                                "M",
+                                2,
+                                0.0
+                            ],
+                            "score_joueur1": 0.0,
+                            "joueur2": [
+                                "tristan",
+                                "montemitro",
+                                "30/04/1995",
+                                "M",
+                                1,
+                                11.0
+                            ],
+                            "score_joueur2": 11.0,
+                            "vainqueur": "tristan montemitro"
+                        }
+                    ]
+                },
+                {
+                    "nom": "Round 2",
+                    "date_heure_debut": "04/06/2022 - 16h26m02s",
+                    "date_heure_fin": "04/06/2022 - 16h26m03s",
+                    "liste_matchs": [
+                        {
+                            "nom": "Match 1",
+                            "joueur1": [
+                                "david",
+                                "montemitro",
+                                "18/03/1976",
+                                "M",
+                                8,
+                                0.0
+                            ],
+                            "score_joueur1": 0.0,
+                            "joueur2": [
+                                "annick",
+                                "maillon",
+                                "25/11/1952",
+                                "F",
+                                7,
+                                11.0
+                            ],
+                            "score_joueur2": 11.0,
+                            "vainqueur": "annick maillon"
+                        },
+                        {
+                            "nom": "Match 2",
+                            "joueur1": [
+                                "ghizlane",
+                                "el amraoui",
+                                "25/09/1995",
+                                "F",
+                                6,
+                                11.0
+                            ],
+                            "score_joueur1": 11.0,
+                            "joueur2": [
+                                "assiah",
+                                "montemitro",
+                                "02/05/2021",
+                                "F",
+                                5,
+                                0.0
+                            ],
+                            "score_joueur2": 0.0,
+                            "vainqueur": "ghizlane el amraoui"
+                        },
+                        {
+                            "nom": "Match 3",
+                            "joueur1": [
+                                "armelle",
+                                "magnier",
+                                "11/05/1976",
+                                "F",
+                                4,
+                                0.0
+                            ],
+                            "score_joueur1": 0.0,
+                            "joueur2": [
+                                "gianni",
+                                "montemitro",
+                                "25/11/2022",
+                                "M",
+                                3,
+                                0.0
+                            ],
+                            "score_joueur2": 0.0,
+                            "vainqueur": "C'est un match nul"
+                        },
+                        {
+                            "nom": "Match 4",
+                            "joueur1": [
+                                "enzo",
+                                "montemitro",
+                                "11/02/2002",
+                                "M",
+                                2,
+                                1.0
+                            ],
+                            "score_joueur1": 1.0,
+                            "joueur2": [
+                                "tristan",
+                                "montemitro",
+                                "30/04/1995",
+                                "M",
+                                1,
+                                99.0
+                            ],
+                            "score_joueur2": 99.0,
+                            "vainqueur": "tristan montemitro"
+                        }
+                    ]
+                }
             ]
         }
     }

@@ -1,6 +1,5 @@
-from textwrap import indent
-from turtle import update
 from tinydb import TinyDB, where
+
 
 tournois_database = TinyDB('tournois.json', indent=4)
 
@@ -10,7 +9,7 @@ class Tournoi:
     classe modelisant un tournoi
 
     """
-    def __init__(self,nom ,lieu ,date ,temps , description, nombre_tours=4, joueurs=None,tours=None):
+    def __init__(self,nom ,lieu ,date ,temps , description, nombre_tours=4, joueurs=None,tours=[]):
         self.nom = nom
         self.lieu = lieu
         self.date = date
@@ -18,21 +17,58 @@ class Tournoi:
         self.description = description
         self.nombre_tours = nombre_tours
         self.joueurs = joueurs
-        self.tours = []
+        self.tours = tours
         self.infos_tournoi = [self.nom, self.lieu, self.date, self.temps, self.description, self.nombre_tours, self.joueurs, self.tours]
 
     def __call__(self):
         return self.infos_tournoi
 
     def __str__(self):
-        return f"### Bienvenue au Tournoi ###\n" \
-               f"#####  {self.nom} #####\n" \
+        return f"***** Bienvenue au Tournoi *****\n" \
+               f"*****  {self.nom} *****\n" \
                f"Lieu: {self.lieu} \n" \
                f"date : {self.date} \n" \
                f"Système: {self.temps}\n" \
                f"Description :{self.description}\n" \
-               #f" {self.tours}"
-               #f"Joueurs : {'---'.join([str(j) for j in self.joueurs])}" \
+               
+
+    def afficher_tournoi(self):
+        print("***** Bienvenue au Tournoi *****\n"
+              f"*****  {self.nom} *****\n"
+              f"Lieu: {self.lieu}\n"
+              f"date : {self.date}\n"
+              f"Système: {self.temps}\n"
+              f"Description :{self.description}\n")
+        self.afficher_joueurs()
+        self.afficher_tours()
+
+
+    def afficher_joueurs(self):
+        print("Joueurs :")
+        if len(self.joueurs) > 0:
+            for joueur in self.joueurs:
+                print(joueur)
+        else:
+            print("Il n'y a pas encore de joueurs")
+
+    def afficher_tours(self):
+        print("Tours :")
+        if len(self.tours) > 0:
+            for tour in self.tours:
+                tour.afficher_tour()
+        else:
+            print("Il n'y a pas encore de tours")
+
+    def afficher_matchs(self):
+        print("Matchs :")
+        if len(self.tours) > 0:
+            for tour in self.tours:
+                tour.afficher_matchs()
+        else:
+            print("Il n'y a pas encore de matchs")
+
+    
+
 
 
     def tournoi_serialized(self):
@@ -57,4 +93,3 @@ class Tournoi:
    # blitz = 10 min ou moins pour jouer l'ensemble des coups
    # bullet = 3 min ou moins pour jouer l'ensemble des coups
    # jeu rapide = au moins 15 min et moins de 60 min pour jouer l'ensemble des coups
-

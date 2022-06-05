@@ -1,4 +1,6 @@
 from os import system, name
+import sys
+import time
 
 
 class MenuPrincipal:
@@ -9,6 +11,7 @@ class MenuPrincipal:
         """
         affiche le menu principal
         """
+        print()
         print()
         print("#" * 37)
         print("*********  Menu Principal  **********")
@@ -44,6 +47,22 @@ class NettoyerEcran:
         else:
             _ = system('clear')
 
+class Quitter:
+    def quitter():
+        print()
+        print()
+        print(37 * "*")
+        print(37 * "*")
+        time.sleep(2)
+        print(14 * "*" + "  MERCI  " + 14 * "*")
+        time.sleep(2)
+        print(12 * "*" + "  AU REVOIR  " + 12 * "*")
+        time.sleep(2)
+        print(37 * "*")
+        print(37 * "*")
+
+        sys.exit()
+
 
 class MenuJoueur:
     """
@@ -59,7 +78,7 @@ class MenuJoueur:
         choix_fini = False
         while choix_fini == False:
             print()
-            print(" 1/ Mettre à jour le classement des joueurs \n"
+            print(" 1/ Modifier des informations concernant un joueur \n"
                   " 2/ Afficher un rapport \n"
                   " 3/ Retourner au Menu Principal ! \n")
             choix = input("=>\t")
@@ -76,6 +95,7 @@ class MenuJoueur:
         print()
         print("..... CHARGEMENT .....")
         print()
+        time.sleep(1)
         print("Le joueur a bien été ajouté au tournoi.")
         print()
 
@@ -95,9 +115,9 @@ class MenuTournoi:
         while choix_fini == False:
             print()
             print(" 1/ Créer un nouveau tournoi \n"
-                  " 2/ Ajouter des joueurs au tournoi \n"
-                  " 3/ Lancer le tournoi \n"
-                  " 4/ modifier le tournoi \n"
+                  " 2/ Ajouter des joueurs à un tournoi \n"
+                  " 3/ Lancer un tournoi \n"
+                  " 4/ modifier un tournoi \n"
                   " 5/ Reprendre un tournoi en cours \n"
                   " 6/ Afficher un rapport \n"
                   " 7/ Retourner au Menu Principal \n")
@@ -276,28 +296,11 @@ class MenuTournoi:
         return choix
 
 
-    def continuer_tournoi():
-        """
-        averti que le tournoi reprend 
-        """
-        print()
-        print("Nous reprenons le tournoi en cours\n")
-
-    
-    def retour_menu_principal():
-        """
-        averti que nous sommes bien au menu principal
-        """
-        print()
-        print("Vous êtes de retour au menu principal !\n")
-
-
-
 class MenuRapportTournoi:
     """
     toutes les methodes en lien avec les rapports des tournois
     """
-    def afficher_menu_rapport_tournoi():
+    def afficher_menu_rapport_tournoi(self):
         """affiche le menu pour les rapports sur les tournois
            et recupere le choix
 
@@ -307,29 +310,58 @@ class MenuRapportTournoi:
         choix_valide = False
         while choix_valide == False:
             print()
-            print("1/ Voulez-vous afficher le rapport d'un tournoi ?\n"
-                  "2/ Voulez-vous afficher le rapport de tous les tournois\n" )
+            print("1/ Voulez-vous afficher la liste de tous les joueurs d'un tournoi ?\n"
+                  "2/ Voulez-vous afficher la liste de tous les tournois ?\n" 
+                  "3/ Voulez-vous afficher la liste de tous les tours d'un tournoi ?\n" 
+                  "4/ Voulez-vous afficher la liste de tous les matchs d'un tournoi ?\n" 
+                  
+                  )
             choix = input("=>\t")
-            if choix == "1" or choix == "2":
+            if choix == "1" or choix == "2" or choix == "3" or choix == "4":
                 choix_valide = True
                 break
+            else:
+                print()
+                print(".... ERREUR ....")
+                print("Vous devez entrer un nombre entre 1 et 4")
         return choix
 
-    def afficher_un_tournoi():
+
+    def afficher_liste_joueurs_tournoi():
         """
-        affichage pour le rapport d'un seul tournoi
+        affichage pour la liste de tous les joueurs d'un seul tournoi
         """
         print("#" * 37)
-        print("****** Voici le rapport du Tournoi ******") 
+        print("****** Voici la liste de tous les joueurs du Tournoi ******") 
         print("#" * 37)
+
 
     def afficher_tous_tournois():
         """
-        affichage pour le rapport de plusieurs tournois
+        affichage pour la liste de tous les tournois
         """
         print("#" * 37)
-        print("****** Voici le rapport des Tournois ******") 
+        print("****** Voici la liste de tous les Tournois ******") 
         print("#" * 37)
+    
+
+    def afficher_liste_tours_tournoi():
+        """
+        affichage pour la liste de tous les tours d'un tournoi
+        """
+        print("#" * 37)
+        print("****** Voici la liste de tous les tours du Tournoi ******") 
+        print("#" * 37)
+
+
+    def afficher_liste_matchs_tournoi():
+        """
+        affichage pour la liste de tous les matchs d'un tournoi
+        """
+        print("#" * 37)
+        print("****** Voici la liste de tous les matchs du Tournoi ******") 
+        print("#" * 37)
+
 
 
 class MenuRapportJoueur:
@@ -388,11 +420,11 @@ class MenuRapportJoueur:
 
 
 
-class MenuTour:
+class MenuTour():
     """
     toutes les methodes en lien avec le menu des tours
     """
-    def commencer_tour():
+    def commencer_tour(self):
         """
         demande si l'on doit commencer le tour ou non
 
@@ -401,20 +433,21 @@ class MenuTour:
         """
         valid_tour = False
         while valid_tour == False:
+            print()
             commencer = input("Voulez-vous commencer le tour ? (oui/non)\t")
             if commencer == "oui":
                 valid_tour = True
                 break
             elif commencer == "non":
-                valid_tour = True
-                break
+                Quitter.quitter()
+
             else:
                 print()
                 print("Veuillez repondre par oui ou par non.")
                 print()
         return commencer
 
-    def finir_tour():
+    def finir_tour(self):
         """
         demande si le tour est terminé
 
@@ -423,6 +456,7 @@ class MenuTour:
         """
         valid_tour = False
         while valid_tour == False:
+            print()
             finir = input("Le Tour est-il terminé ? (oui/non)\t")
             if finir == "oui":
                 valid_tour = True
@@ -435,8 +469,3 @@ class MenuTour:
                 print("Veuillez repondre par oui ou par non.")
                 print()
         return finir
-
-
-    
-
-

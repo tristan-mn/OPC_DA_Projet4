@@ -1,8 +1,7 @@
-import sys
 
-from vue import MenuJoueur, MenuPrincipal, MenuTournoi
+from vue import MenuJoueur, MenuPrincipal, MenuTournoi, Quitter
 from vue import NettoyerEcran
-from application import RapportJoueurManager, RapportTournoiManager, TournoiManager, JoueurManager
+from application import ModifierJoueur, RapportJoueurManager, RapportTournoiManager, TournoiManager, JoueurManager
 
 
 class MenuPrincipalController:
@@ -29,24 +28,27 @@ class MenuPrincipalController:
 
 
 class JoueurMenuController(MenuPrincipalController):
-    
-    def __init__(self):
-        super().__init__()
-        self.creer_joueur = JoueurManager()
-        # self.rapport_joueurs = RapportJoueur()
-        self.menu_principal_controller = MenuPrincipalController()
 
     def __call__(self):
-        choix = MenuJoueur.choix_menu_joueur(self)
-        if choix == "1":
-            # mettre a jour le classement
-            # self.controller_choisi = self
-            pass
-        elif choix == "2":
-            self.controller_choisi = RapportJoueurManager.lancer_rapport(self)
-            
-        elif choix == "3":
-            self.controller_choisi = self.menu_principal_controller()
+        choix = ""
+        menu = MenuJoueur()
+        rapport_joueur = RapportJoueurManager()
+        modification_joueur = ModifierJoueur()
+        while choix != "3":
+            choix = menu.choix_menu_joueur()
+            if choix == "1":
+                self.controller_choisi = modification_joueur()
+
+            elif choix == "2":
+                self.controller_choisi = rapport_joueur.lancer_rapport()
+                
+            elif choix == "3":
+                self.controller_choisi = MenuPrincipalController()
+                self.controller_choisi()
+            else:
+                print()
+                print("... ERREUR ...")
+                print(" Vous devez faire un choix entre 1 et 3.")
 
 
 
@@ -54,28 +56,33 @@ class TournoiMenuController(MenuPrincipalController):
 
     def __call__(self):
         choix = ""
+
+        tournoi_manager = TournoiManager()
+        rapport_tournoi_manager = RapportTournoiManager()
+
         while choix != "7":
             choix = MenuTournoi.choix_menu_tournoi()
             if choix == "1":
-                self.controller_choisi = TournoiManager.creer_tournoi(self)
+                self.controller_choisi = tournoi_manager.creer_tournoi()
 
             elif choix == "2":
-                self.controller_choisi = TournoiManager.ajout_joueurs(self)
+                self.controller_choisi = tournoi_manager.ajout_joueurs()
 
             elif choix == "3":
-                self.controller_choisi = TournoiManager.lancer_tournoi(self)
+                self.controller_choisi = tournoi_manager.lancer_tournoi()
 
             elif choix == "4":
-                self.controller_choisi = TournoiManager.modifier_tournoi(self)
+                self.controller_choisi = tournoi_manager.modifier_tournoi()
 
             elif choix == "5":
-                self.controller_choisi = TournoiManager.reprendre_tournoi(self)
+                self.controller_choisi = tournoi_manager.reprendre_tournoi()
 
             elif choix == "6":
-                self.controller_choisi = RapportTournoiManager.lancer_rapport(self)
+                self.controller_choisi = rapport_tournoi_manager.lancer_rapport()
 
             elif choix == "7":
                 self.controller_choisi = MenuPrincipalController()
+                self.controller_choisi()
             
             else:
                 print()
@@ -86,4 +93,4 @@ class TournoiMenuController(MenuPrincipalController):
 class QuitterApplication:
 
     def __call__(self):
-        sys.exit()
+        Quitter.quitter()
