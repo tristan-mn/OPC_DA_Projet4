@@ -612,14 +612,22 @@ class RapportTournoiManager:
             # tous les tournois
             tournois_unserialized = []
             tournois = tournois_database.all()
+            nb = 1
 
             for tournoi in tournois:
                 tournoi_unserialized = Tournoi(**tournoi)
                 joueurs = tournoi_unserialized.joueurs
+                tours = tournoi_unserialized.tours
                 tournoi_unserialized.joueurs = []
+                tournoi_unserialized.tours = []
                 for joueur in joueurs:
                     joueur_serialized = Joueur(**joueur)
                     tournoi_unserialized.joueurs.append(joueur_serialized)
+                for tour in tours:
+                    tour_serialized = Tour(**tour, numero_round=nb)
+                    nb+=1
+                    tournoi_unserialized.tours.append(tour_serialized)
+                    
                 tournois_unserialized.append(tournoi_unserialized)
             
             for tournoi in tournois_unserialized:

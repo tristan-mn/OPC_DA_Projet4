@@ -1,5 +1,7 @@
 from tinydb import TinyDB, where
 
+from model_tour import Tour
+
 
 tournois_database = TinyDB('tournois.json', indent=4)
 
@@ -54,7 +56,10 @@ class Tournoi:
     def afficher_tours(self):
         print("Tours :")
         if len(self.tours) > 0:
+            tours_unserialized = []
             for tour in self.tours:
+                tours_unserialized.append(tour)
+            for tour in tours_unserialized:   
                 tour.afficher_tour()
         else:
             print("Il n'y a pas encore de tours")
