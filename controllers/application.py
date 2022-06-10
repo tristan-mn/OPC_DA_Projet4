@@ -1,3 +1,4 @@
+from tkinter import E, Menu
 from tinydb import where
 from vues.vue import MenuRapportJoueur, MenuRapportTournoi, MenuTournoi, MenuJoueur , MenuTour
 from models.model_tournoi import Tournoi , tournois_database
@@ -23,7 +24,7 @@ class TournoiManager():
         
     def creer_tournoi(self):
         """
-        création du tournoi 
+        méthode pour créer un tournoi
         """
         self.vue_tournoi = MenuTournoi()
         self.tournoi = Tournoi(*self.vue_tournoi.ajout_infos_tournoi())
@@ -32,30 +33,44 @@ class TournoiManager():
 
     def ajout_joueurs(self):
         """
-        Cette méthode permet de demander les informations sur chaque joueur participant au tournoi
+        Cette méthode permet de demander les informations de chaque joueur participant au tournoi
+
+        on demande d'abord de quel tournoi il s'agit
+        on créé une instance de joueur pour chaque joueur avec ses informations
+        on ajoute les joueurs au tournoi dans la base de données
 
         
         Returns:
-            liste:  les informations de chaque joueur sont enregistrées sous forme de liste
-                    les joueurs sont ensuite ajoutés au tournoi
+            liste:  
+            une liste des joueurs avec pour chacun une liste de leurs informations
 
         """
         NB_JOUEURS = 8
         liste_joueurs = []
         dict_joueurs = []
         joueur_manager = JoueurManager()
+        menu_joueur = MenuJoueur()
+        menu_tournoi =MenuTournoi()
 
-        tournoi_choisi = MenuTournoi.ajout_joueurs(self)
-
-        for i in range(NB_JOUEURS):
-            infos_joueur = joueur_manager.ajout_infos_joueur()
-            joueur = Joueur(*infos_joueur)
-            liste_joueurs.append(joueur())
-            dict_joueurs.append(joueur.serialized())
-            Joueur.ajout_joueur_database(self, joueur.serialized())
-            MenuJoueur.ajout_joueur()
+        tournoi_choisi = menu_tournoi.ajout_joueurs()
+        try:
+            self.tournoi = Tournoi(**tournois_database.get(where("nom") == tournoi_choisi))
+        except TypeError:
+            print()
+            print("Le tournoi ne se trouve pas dans la base de données.")
+            print("Veuillez rééssayer")
+        else:    
+            for i in range(NB_JOUEURS):
+                infos_joueur = joueur_manager.ajout_infos_joueur()
+                joueur = Joueur(*infos_joueur)
+                liste_joueurs.append(joueur())
+                dict_joueurs.append(joueur.serialized())
+                joueur.ajout_joueur_database(joueur.serialized())
+                menu_joueur.ajout_joueur()
         
-        Joueur.ajout_tournoi_database(self, tournoi=tournoi_choisi, joueurs=dict_joueurs)
+            self.tournoi.update_joueurs_tournoi_database(tournoi=tournoi_choisi, joueurs=dict_joueurs)
+
+
         
         return liste_joueurs
 
@@ -102,170 +117,223 @@ class TournoiManager():
 
     def commencer_premier_tour(self):
         """
-        recupere le 'heure de début et de fin du tour
-        tri les joueurs en fonction de leurs classement mondial avant de créer les matchs
+        Cette méthode lance le premier tour d'un tournoi
+
+        on tri les joueurs selon leurs classement mondial
+        on créée les premiers matchs
+        on enregistre le temps et la date du début et de la fin du tour
+        on demande les résultats des matchs
 
         Returns:
-            liste: retourne une liste avec les informations du premier tour
+            dict: on retourne un dictionnaire avec toutes les informations du tour
         """
+        gestion_match = MatchManager()
         menu = MenuTour()
         debut = menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         premier_tri = self.tri_joueurs_classement_mondial()
-        matchs = MatchManager.creer_premiers_matchs(self, premier_tri)
+        matchs = gestion_match.creer_premiers_matchs(premier_tri)
         fin = menu.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
-        resultat_premiers_matchs = MatchManager.resultat_match(self, matchs)
+        resultat_premiers_matchs = gestion_match.resultat_match(matchs)
         premier_tour = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_premiers_matchs, numero_round=1)
 
         return premier_tour.serialized()
 
 
     def commencer_tour_suivant(self, nb_round):
-        """ Cette méthode tri les joueurs en fonction de leurs points accumulés durant le tournoi avant de créer les matchs
-        Returns:
-            liste: retourne une liste de matchs
         """
-         
+        Cette méthode lance un tour survenant systématiquement pares le premier tour d'un tournoi
+
+        on tri les joueurs selon leurs points acquis durant le tournoi
+        on créée les premiers matchs
+        on enregistre le temps et la date du début et de la fin du tour
+        on demande les résultats des matchs
+
+        Returns:
+            dict: on retourne un dictionnaire avec toutes les informations du tour
+        """
+        gestion_match = MatchManager()
         menu = MenuTour()
         debut = menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         tri_suivant = self.tri_joueurs_points_tournoi()
-        matchs = MatchManager.creer_matchs_suivants(self, tri_suivant)
+        matchs = gestion_match.creer_matchs_suivants(self, tri_suivant)
         fin = menu.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
-        resultat_tour_suivant = MatchManager.resultat_match(self, matchs)
+        resultat_tour_suivant = gestion_match.resultat_match(self, matchs)
         tour_suivant = Tour(date_heure_debut=debut_temps, date_heure_fin=fin_temps, liste_matchs=resultat_tour_suivant, numero_round=nb_round)
         return tour_suivant.serialized()
 
         
     def lancer_tournoi(self):
         """
-        Cette méthode permet de lancer le tournoi Suisse
+
+        c'est méthode lance le tournoi
 
         """
 
         # choix du tournoi 
-        #gestion_tournoi = TournoiManager()
-        choix_tournoi = MenuTournoi.choix_tournoi()
-        self.tournoi = Tournoi(**tournois_database.get(where("nom") == choix_tournoi))
-        
-        nb_tours_suivants = 3
-        # modifier le nombre de tour à jouer en soustrayant le nombre de tours joués qui est en paramètre
+        menu_tournoi = MenuTournoi()
+        choix_tournoi = menu_tournoi.choix_tournoi()
+        # on va chercher le tournoi dans la base de données
+        try:
+            self.tournoi = Tournoi(**tournois_database.get(where("nom") == choix_tournoi))
 
-        #premier tour du tournoi
-        premier_tour = self.commencer_premier_tour()
-        self.tournoi.tours.append(premier_tour)
-        self.tournoi.update_tours(self.tournoi.tours)
-        self.tournoi.nombre_tours-=1
-        
-        
-        # 3 derniers tours du tournoi
-        numero = 2
-        for i in range(nb_tours_suivants):
-            tour_suivant = self.commencer_tour_suivant(nb_round=numero)
-            self.tournoi.tours.append(tour_suivant)
+        except TypeError:
+            print()
+            print("Le tournoi ne se trouve pas dans la base de données.")
+            print("Veuillez rééssayer")
+
+        else:
+            nb_tours_suivants = self.tournoi.nombre_tours
+
+            # on lance le premier tour du tournoi
+            premier_tour = self.commencer_premier_tour()
+            self.tournoi.tours.append(premier_tour)
+            # on met à jour les tours du tournoi dans la base données
             self.tournoi.update_tours(self.tournoi.tours)
             self.tournoi.nombre_tours-=1
-            numero+=1
+            
+            
+            # 3 derniers tours du tournoi
+            numero = 2
+            for i in range(self.tournoi.nombre_tours):
+                tour_suivant = self.commencer_tour_suivant(nb_round=numero)
+                self.tournoi.tours.append(tour_suivant)
+                self.tournoi.update_tours(self.tournoi.tours)
+                self.tournoi.nombre_tours-=1
+                numero+=1
+        
     
 
     def modifier_tournoi(self):
+        """
+        cette méthode permet de modifier un tournoi séléctionné dans la base données 
+        """
         menu_tournoi = MenuTournoi()
         choix_valide = False
         nom_tournoi = input("Quel tournoi voulez-vous modifier ?\t")
-        tournoi = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
-        print()
-        print("Voici vôtre tournoi ")
-        print()
-        print(tournoi)
-        print("1/ nom \n"
-              "2/ lieu \n"
-              "3/ date \n"
-              "4/ temps \n"
-              "5/ description \n"
-              )
-        while choix_valide == False:
+        try:
+            tournoi = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+        except TypeError:
             print()
-            choix_modification = input("Que voulez-vous modifier ?\t")
-            if choix_modification == "1":
-                nom = menu_tournoi.ajout_nom_tournoi()
-                tournois_database.update({"nom": nom}, where("nom") == nom_tournoi)
+            print("Le tournoi ne se trouve pas dans la base de données.")
+            print("Veuillez rééssayer")
+        else:    
+            print()
+            print("Voici vôtre tournoi ")
+            print()
+            print(tournoi)
+            print("1/ nom \n"
+                "2/ lieu \n"
+                "3/ date \n"
+                "4/ temps \n"
+                "5/ description \n"
+                )
+            while choix_valide == False:
                 print()
-                print("**** modification réussie ****")
-                choix_valide = True
+                choix_modification = input("Que voulez-vous modifier ?\t")
 
-            elif choix_modification == "2":
-                lieu = menu_tournoi.ajout_lieu()
-                tournois_database.update({"lieu": lieu}, where("nom") == nom_tournoi)
-                print() 
-                print("**** modification réussie ****")
-                choix_valide = True
+                # modification du nom
+                if choix_modification == "1":
+                    nom = menu_tournoi.ajout_nom_tournoi()
+                    tournois_database.update({"nom": nom}, where("nom") == nom_tournoi)
+                    print()
+                    print("**** modification réussie ****")
+                    choix_valide = True
 
-            elif choix_modification == "3":
-                date_tournoi = menu_tournoi.ajout_date_tournoi()
-                tournois_database.update({"date": date_tournoi}, where("nom") == nom_tournoi)
-                print()
-                print("**** modification réussie ****")
-                choix_valide = True
+                # modification du lieu
+                elif choix_modification == "2":
+                    lieu = menu_tournoi.ajout_lieu()
+                    tournois_database.update({"lieu": lieu}, where("nom") == nom_tournoi)
+                    print() 
+                    print("**** modification réussie ****")
+                    choix_valide = True
+
+                # modification de la date
+                elif choix_modification == "3":
+                    date_tournoi = menu_tournoi.ajout_date_tournoi()
+                    tournois_database.update({"date": date_tournoi}, where("nom") == nom_tournoi)
+                    print()
+                    print("**** modification réussie ****")
+                    choix_valide = True
                 
-            elif choix_modification == "4":
-                temps = menu_tournoi.ajout_controle_temps()
-                tournois_database.update({"temps": temps}, where("nom") == nom_tournoi)
-                print()
-                print("**** modification réussie ****")
-                choix_valide = True
+                # modification du temps de jeu
+                elif choix_modification == "4":
+                    temps = menu_tournoi.ajout_controle_temps()
+                    tournois_database.update({"temps": temps}, where("nom") == nom_tournoi)
+                    print()
+                    print("**** modification réussie ****")
+                    choix_valide = True
 
-            elif choix_modification == "5":
-                description = menu_tournoi.ajout_description()
-                tournois_database.update({"description": description}, where("nom") == nom_tournoi)
-                print()
-                print("**** modification réussie ****")
-                choix_valide = True
+                # modification de la description
+                elif choix_modification == "5":
+                    description = menu_tournoi.ajout_description()
+                    tournois_database.update({"description": description}, where("nom") == nom_tournoi)
+                    print()
+                    print("**** modification réussie ****")
+                    choix_valide = True
 
-            else:
-                print("ERREUR ! vous devez rentrer un nombre entre 1 et 5.")
+                else:
+                    print("ERREUR ! vous devez rentrer un nombre entre 1 et 5.")
 
 
     def reprendre_tournoi(self):
-        #gestion_tournoi = TournoiManager()
+        """
+        cette méthode permet de reprendre un tournoi enregistré dans la base de données
+        """
         choix_valide = False
         while choix_valide == False:
 
             nom_tournoi = input("Quel tournoi voulez-vous reprendre ?\t")
-            self.tournoi = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
-
-            nb_tours_suivants = self.tournoi.nombre_tours
-
-            if nb_tours_suivants == 4:
+            try:
+                self.tournoi = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+                
+            except TypeError:
                 print()
-                print("Nous vous informons que ce tournoi n'a pas encore commencé")
-                print()
-                print("Veuillez confirmer le nom du tournoi s'il vous plaît")
-                print()
-                self.lancer_tournoi()
+                print("Le tournoi ne se trouve pas dans la base de données.")
+                print("Veuillez rééssayer")
+                nb_tours_suivants = self.tournoi.nombre_tours
 
             else:
-                for i in range(nb_tours_suivants):
-                    tour_suivant = self.commencer_tour_suivant()
-                    self.tournoi.tours.append(tour_suivant)
-                    self.tournoi.update_tours(self.tournoi.tours)
-                    self.tournoi.nombre_tours=-1
+                if self.tournoi.nombre_tours == 4:
+                    print()
+                    print("Nous vous informons que ce tournoi n'a pas encore commencé")
+                    print()
+                    print("Veuillez confirmer le nom du tournoi s'il vous plaît")
+                    print()
+                    self.lancer_tournoi()
+
+                else:
+                    for i in range(nb_tours_suivants):
+                        tour_suivant = self.commencer_tour_suivant()
+                        self.tournoi.tours.append(tour_suivant)
+                        self.tournoi.update_tours(self.tournoi.tours)
+                        self.tournoi.nombre_tours=-1
             
 
 class MatchManager(TournoiManager):
+    """
+    cette classe s'occupe de la création des matchs
+    elle s'occupe aussi de la gestion des résultats de ces mêmes matchs
+
+    Args:
+        TournoiManager (class): classe héritée qui s'occupe de la gestion du tournoi
+    """
     def __init__(self):
         pass
 
 
     def creer_premiers_matchs(self, joueurs_triés):
-        """_summary_
+        """
+        cette méthode créée les matchs du premier tour
 
         Args:
-            joueurs_tri (_type_): _description_
+            joueurs_tri (tableau): un tableau avec les joueurs triés selon leurs classements mondial
 
         Returns:
-            _type_: _description_
+            tableau: retourne un tableau des instances de tous les matchs
         """
         indice_premier_joueur = 7
         indice_joueur_milieu = 3
@@ -284,8 +352,13 @@ class MatchManager(TournoiManager):
 
     def creer_matchs_suivants(self, joueurs_triés):
         """
-        Cette méthode permet de créer les 4 matchs pour les 3 derniers tours du tournoi suisse
+        cette méthode créée les matchs du deuxieme au quatrieme tour
 
+        Args:
+            joueurs_tri (tableau): un tableau avec les joueurs triés selon leurs points pendant le tournoi
+
+        Returns:
+            tableau: retourne un tableau des instances de tous les matchs
         """
         indice_premier_joueur = 7
         indice_deuxieme_joueur = 6
@@ -310,7 +383,7 @@ class MatchManager(TournoiManager):
             matchs (list): liste de tous les matchs pour chaque tour
 
         Returns:
-            list: liste des matchs avec les score mis à jour
+            list: liste des matchs avec les scores mis à jour
         """
         matchs_serialized = []
         for match in matchs:
@@ -380,6 +453,9 @@ class MatchManager(TournoiManager):
 
 
 class JoueurManager:
+    """
+    cette classe s'occupe de la gestion des joueurs pendant le tournoi
+    """
     def ajout_infos_joueur(self):
         """cette fonction demande dans l'invite de commande les infos d'un joueur
 
@@ -525,9 +601,12 @@ class JoueurManager:
         
 
 class RapportJoueurManager:
+    """
+    cette classe s'occupe de la gestion des rapports sur les joueurs d'un tournoi
+    """
     def lancer_rapport(self):
         """
-        lance rapport demandé en invite de commande
+        lance le rapport demandé en invite de commande
 
         si le nombre 1 est choisi > on affiche tous les joueurs dans l'ordre alphabétique
         si le nombre 2 est choisi > on affiche tous les joueurs dans l'ordre du classement mondial
@@ -565,11 +644,19 @@ class RapportJoueurManager:
             print()
             prenom = input("Quel est le prenom du joueur ?\t")
             nom = input("Quel est le nom du joueur ?\t")
+
             joueur = Joueur(**joueurs_database.get(where("nom") == nom and where("prenom") == prenom))
-            print()
-            menu_rapport_joueur.afficher_un_joueur()
-            print()
-            print(joueur)
+
+            # on vérifie que le joueur se trouve bien dans la base de données
+            if joueur == None:
+                print()
+                print("Le joueur ne se trouve pas dans la base de données.")
+                print("Veuillez réessayer")
+            else:
+                print()
+                menu_rapport_joueur.afficher_un_joueur()
+                print()
+                print(joueur)
 
 
 class RapportTournoiManager:
@@ -581,50 +668,68 @@ class RapportTournoiManager:
             nom_tournoi = input("Vous voulez la liste des joueurs de quel tournoi ?\t")
             print()
             tournoi_unserialized = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
-            joueurs = tournoi_unserialized.joueurs
 
-            choix_valide = False
-            while choix_valide == False:
-                menu_tri = print("1/ trier les joueurs par ordre alphabétique\n"
-                                 "2/ trier les joueurs par classement mondial\n")
+            # on vérifie que le tournoi se trouve bien dans la base de données
+            if tournoi_unserialized == None:
                 print()
-                choix_tri = input("=>\t")
+                print("Le tournoi ne se trouve pas dans la base de données")
+                print()
 
-                if choix_tri == "1":
-                    choix_valide = True
-                    joueurs_tri_alphabetique = sorted(joueurs, key=lambda joueur:joueur['nom'])
-                    tournoi_unserialized.joueurs = []
-                    for joueur in joueurs_tri_alphabetique:
-                        joueur_serialized = Joueur(**joueur)
-                        tournoi_unserialized.joueurs.append(joueur_serialized)
+            else:    
+                joueurs = tournoi_unserialized.joueurs
 
-                elif choix_tri == "2":
-                    choix_valide = True
-                    joueurs_tri_score = sorted(joueurs, key=lambda joueur: joueur['classement'])
-                    tournoi_unserialized.joueurs = []
-                    for joueur in joueurs_tri_score:
-                        joueur_serialized = Joueur(**joueur)
-                        tournoi_unserialized.joueurs.append(joueur_serialized)
+                choix_valide = False
+                while choix_valide == False:
+                    menu_tri = print("1/ trier les joueurs par ordre alphabétique\n"
+                                    "2/ trier les joueurs par classement mondial\n")
+                    print()
+                    choix_tri = input("=>\t")
 
-            menu_rapport_tournoi.afficher_liste_joueurs_tournoi()
-            tournoi_unserialized.afficher_joueurs()
+                    # on trie les joueurs par ordre alphabétique
+                    if choix_tri == "1":
+                        choix_valide = True
+                        joueurs_tri_alphabetique = sorted(joueurs, key=lambda joueur:joueur['nom'])
+                        tournoi_unserialized.joueurs = []
+                        for joueur in joueurs_tri_alphabetique:
+                            joueur_serialized = Joueur(**joueur)
+                            tournoi_unserialized.joueurs.append(joueur_serialized)
+
+                    # on trie les joueurs selon leurs classements mondial
+                    elif choix_tri == "2":
+                        choix_valide = True
+                        joueurs_tri_score = sorted(joueurs, key=lambda joueur: joueur['classement'])
+                        tournoi_unserialized.joueurs = []
+                        for joueur in joueurs_tri_score:
+                            joueur_serialized = Joueur(**joueur)
+                            tournoi_unserialized.joueurs.append(joueur_serialized)
+
+                menu_rapport_tournoi.afficher_liste_joueurs_tournoi()
+                tournoi_unserialized.afficher_joueurs()
 
         elif choix == "2":
-            # tous les tournois
+            # on affiche les rapports de tous les tournois de la base de données
+
             tournois_unserialized = []
             tournois = tournois_database.all()
             numero = 1
 
             for tournoi in tournois:
+                # on commence par désérializer tous les tournois
                 tournoi_unserialized = Tournoi(**tournoi)
+                # on récupère les joueurs pour les désérializer
                 joueurs = tournoi_unserialized.joueurs
+                # on récupère les tours pour les désérializer
                 tours = tournoi_unserialized.tours
+
                 tournoi_unserialized.joueurs = []
                 tournoi_unserialized.tours = []
+
                 for joueur in joueurs:
+                    # on désérialize
                     joueur_serialized = Joueur(**joueur)
                     tournoi_unserialized.joueurs.append(joueur_serialized)
                 for tour in tours:
+                    # on désérialize
                     tour_serialized = Tour(**tour, numero_round=numero)
                     numero+=1
                     tournoi_unserialized.tours.append(tour_serialized)
@@ -633,41 +738,56 @@ class RapportTournoiManager:
 
             menu_rapport_tournoi.afficher_tous_tournois()
             for tournoi in tournois_unserialized:
+                # on affiche tous les tournois dans l'invite de commande
                 tournoi.afficher_tournoi()
 
         elif choix == "3":
             print()
             nom_tournoi = input("Vous voulez la liste des tours de quel tournoi ?\t")
             print()
+            
             tournoi_unserialized = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
-            tours = tournoi_unserialized.tours
-            tournoi_unserialized.tours = []
-            
-            numero = 1
-            for tour in tours:
-                tour_serialized = Tour(**tour, numero_round=numero)
-                numero+=1
-                tournoi_unserialized.tours.append(tour_serialized)
-            
-            menu_rapport_tournoi.afficher_liste_tours_tournoi()
-            tournoi_unserialized.afficher_tours()
-            # tous les tours d'un tournoi
+            if tournoi_unserialized == None:
+                print()
+                print("Le tournoi ne se trouve pas dans la base de données")
+                
+            else:
+                tours = tournoi_unserialized.tours
+                tournoi_unserialized.tours = []
+                
+                numero = 1
+                for tour in tours:
+                    tour_serialized = Tour(**tour, numero_round=numero)
+                    numero+=1
+                    tournoi_unserialized.tours.append(tour_serialized)
+                
+                menu_rapport_tournoi.afficher_liste_tours_tournoi()
+                # on affiche tous les tours d'un tournoi
+                tournoi_unserialized.afficher_tours()
+                
 
         elif choix == "4":
             print()
             nom_tournoi = input("Vous voulez la liste des matchs de quel tournoi ?\t")
             print()
             tournoi_unserialized = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
-            tours = tournoi_unserialized.tours
-            tournoi_unserialized.tours = []
-            
-            for tour in tours:
-                tour_serialized = Tour(**tour)
-                tournoi_unserialized.tours.append(tour_serialized)
 
-            menu_rapport_tournoi.afficher_liste_matchs_tournoi()
-            tournoi_unserialized.afficher_matchs()
-            # tous les matchs d'un tournoi
+            if tournoi_unserialized == None:
+                print()
+                print("Le tournoi ne se trouve pas dans la base de données")
+            
+            else:
+                tours = tournoi_unserialized.tours
+                tournoi_unserialized.tours = []
+                
+                for tour in tours:
+                    tour_serialized = Tour(**tour)
+                    tournoi_unserialized.tours.append(tour_serialized)
+
+                menu_rapport_tournoi.afficher_liste_matchs_tournoi()
+                # on affiche tous les matchs d'un tournoi
+                tournoi_unserialized.afficher_matchs()
+                
 
 
 class ModifierJoueur(JoueurManager):
