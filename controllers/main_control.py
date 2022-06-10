@@ -56,11 +56,12 @@ class TournoiMenuController(MenuPrincipalController):
     def __call__(self):
         choix = ""
 
+        menu_tournoi = MenuTournoi()
         tournoi_manager = TournoiManager()
         rapport_tournoi_manager = RapportTournoiManager()
 
         while choix != "7":
-            choix = MenuTournoi.choix_menu_tournoi()
+            choix = menu_tournoi.choix_menu_tournoi()
             if choix == "1":
                 self.controller_choisi = tournoi_manager.creer_tournoi()
 

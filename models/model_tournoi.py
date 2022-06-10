@@ -19,6 +19,7 @@ class Tournoi:
         self.tours = tours
         self.infos_tournoi = [self.nom, self.lieu, self.date, self.temps, self.description, self.nombre_tours, self.joueurs, self.tours]
 
+
     def __call__(self):
         return self.infos_tournoi
 
@@ -42,6 +43,7 @@ class Tournoi:
         else:
             print("Il n'y a pas encore de joueurs")
 
+
     def afficher_tours(self):
         print("Tours :")
         if len(self.tours) > 0:
@@ -52,6 +54,7 @@ class Tournoi:
                 tour.afficher_tour()
         else:
             print("Il n'y a pas encore de tours")
+
 
     def afficher_matchs(self):
         print("Matchs :")
@@ -77,6 +80,10 @@ class Tournoi:
 
     def add_to_database(self, tournoi):
         tournois_database.insert(tournoi)
+
+    
+    def update_joueurs_tournoi_database(self, tournoi, joueurs):
+        tournois_database.update({"joueurs": joueurs}, where("nom") == tournoi)
     
     
     def update_tours(self, tour):

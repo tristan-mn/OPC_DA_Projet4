@@ -5,7 +5,7 @@ import time
 
 class MenuPrincipal:
     """
-    toutes les methodes en lien avec menu principal
+    toutes les methodes d'affichage en lien avec menu principal
     """
     def afficher_menuprincipal(self):
         """
@@ -49,6 +49,9 @@ class NettoyerEcran:
 
 class Quitter:
     def quitter():
+        """
+        methode pour quitter l'application 
+        """
         print()
         print()
         print(37 * "*")
@@ -66,7 +69,7 @@ class Quitter:
 
 class MenuJoueur:
     """
-    toutes les methodes en lien avec le menu des joueurs
+    toutes les methodes d'affichage en lien avec le menu des joueurs
     """
     def choix_menu_joueur(self):
         """
@@ -88,7 +91,7 @@ class MenuJoueur:
 
         return choix
 
-    def ajout_joueur():
+    def ajout_joueur(self):
         """
         affiche la confirmation que le joueur a bien été ajouté
         """
@@ -103,9 +106,9 @@ class MenuJoueur:
 
 class MenuTournoi:
     """
-    toutes les methodes en lien avec le menu du tournoi
+    toutes les methodes d'affichage en lien avec le menu du tournoi
     """
-    def choix_menu_tournoi():
+    def choix_menu_tournoi(self):
         """affiche les choix disponibles pour le menu tournoi
 
         Returns:
@@ -284,10 +287,11 @@ class MenuTournoi:
         Returns:
             str: nom du tournoi
         """
+        print()
         nom_tournoi = input("Dans quel tournoi voulez-vous ajouter des joueurs ? (nom du tournoi)\n")
         return nom_tournoi
     
-    def choix_tournoi():
+    def choix_tournoi(self):
         choix_valide = False
         while choix_valide == False:
             choix = input("Quel est le nom du tournoi à lancer ?\t")
@@ -328,46 +332,46 @@ class MenuRapportTournoi:
         return choix
 
 
-    def afficher_liste_joueurs_tournoi():
+    def afficher_liste_joueurs_tournoi(self):
         """
         affichage pour la liste de tous les joueurs d'un seul tournoi
         """
         print("#" * 37)
         print("****** Voici la liste de tous les joueurs du Tournoi ******") 
-        print("#" * 37)
+        print("#" * 37 + "\n")
 
 
-    def afficher_tous_tournois():
+    def afficher_tous_tournois(self):
         """
         affichage pour la liste de tous les tournois
         """
         print("#" * 37)
         print("****** Voici la liste de tous les Tournois ******") 
-        print("#" * 37)
+        print("#" * 37 + "\n")
     
 
-    def afficher_liste_tours_tournoi():
+    def afficher_liste_tours_tournoi(self):
         """
         affichage pour la liste de tous les tours d'un tournoi
         """
         print("#" * 37)
         print("****** Voici la liste de tous les tours du Tournoi ******") 
-        print("#" * 37)
+        print("#" * 37 + "\n")
 
 
-    def afficher_liste_matchs_tournoi():
+    def afficher_liste_matchs_tournoi(self):
         """
         affichage pour la liste de tous les matchs d'un tournoi
         """
         print("#" * 37)
         print("****** Voici la liste de tous les matchs du Tournoi ******") 
-        print("#" * 37)
+        print("#" * 37 + "\n")
 
 
 
 class MenuRapportJoueur:
     """
-    toutes les méthodes en lien avec les rapports des joueurs
+    toutes les méthodes d'affichage en lien avec les rapports des joueurs
     """
     def afficher_menu_rapport_joueur(self):
         """affiche le menu pour le menu des rapports sur les joueurs
@@ -399,7 +403,7 @@ class MenuRapportJoueur:
         print()
         print("#" * 37)
         print("****** Voici le rapport des joueurs par ordre alphabétique ******") 
-        print("#" * 37)
+        print("#" * 37 + "\n")
 
     def afficher_joueurs_ordre_classement(self):
         """
@@ -408,7 +412,7 @@ class MenuRapportJoueur:
         print()
         print("#" * 37)
         print("****** Voici le rapport des joueurs par ordre dans le classement mondial ******") 
-        print("#" * 37)
+        print("#" * 37 + "\n")
 
     def afficher_un_joueur(self):
         """
@@ -417,13 +421,13 @@ class MenuRapportJoueur:
         print()
         print("#" * 37)
         print("****** Voici le rapport du joueur selectionné ******") 
-        print("#" * 37)
+        print("#" * 37 + "\n")
 
 
 
 class MenuTour():
     """
-    toutes les methodes en lien avec le menu des tours
+    toutes les methodes d'affichage en lien avec le menu des tours
     """
     def commencer_tour(self):
         """

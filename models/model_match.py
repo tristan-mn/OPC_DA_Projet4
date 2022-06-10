@@ -13,12 +13,14 @@ class Match:
         self.numero = numero
         self.nom_match = "Match " + str(self.numero)
 
+
     def __call__(self):
         return [[self.joueur1, self.score_joueur1 ], [self.joueur2, self.score_joueur2]]
 
 
     def __str__(self) -> str:
         return f"{self.nom_match} : {self.joueur1[0]} {self.joueur1[1]} -- VS -- {self.joueur2[0]} {self.joueur2[1]}.\n"
+
 
     def afficher_match(self, numero_match):
         print( f"*****  Match {numero_match} *****\n"

@@ -18,6 +18,7 @@ class Tour:
     def __call__(self):    
         return [self.nom, self.date_heure_debut, self.date_heure_fin, self.liste_matchs]
 
+
     def afficher_tour(self):
         print(f"****************************\n"
               f"*********  {self.nom} **********\n"

@@ -59,6 +59,3 @@ class Joueur:
             joueur (dictionnaire): le dictionnaire contient les informations du joueur serialisées
         """
         joueurs_database.insert(joueur)
-
-    def ajout_tournoi_database(self, tournoi, joueurs):
-        tournois_database.update({"joueurs": joueurs}, where("nom") == tournoi)
