@@ -27,7 +27,7 @@ class MenuPrincipal:
             str: recupere le choix
         """
         choix_fini = False
-        if choix_fini is False:
+        while choix_fini is False:
             print()
             print(
                 " 1/ Menu Tournoi \n"
@@ -85,7 +85,7 @@ class MenuJoueur:
             str: recupere le choix
         """
         choix_fini = False
-        if choix_fini is False:
+        while choix_fini is False:
             print()
             print(
                 " 1/ Modifier des informations concernant un joueur \n"
@@ -122,7 +122,7 @@ class MenuTournoi:
             str: recupere le choix
         """
         choix_fini = False
-        if choix_fini is False:
+        while choix_fini is False:
             print()
             print(
                 " 1/ Créer un nouveau tournoi \n"
@@ -174,7 +174,7 @@ class MenuTournoi:
             str: nom du tournoi
         """
         nom_valide = False
-        if nom_valide is False:
+        while nom_valide is False:
             nom_tournoi = input("Quel est le nom du tournoi ? \t")
             if nom_tournoi != "":
                 nom_valide = True
@@ -193,7 +193,7 @@ class MenuTournoi:
             str: lieu du tournoi
         """
         lieu_valide = False
-        if lieu_valide is False:
+        while lieu_valide is False:
             lieu = input("Où se déroule le tournoi ? \t")
             if lieu != "":
                 lieu_valide = True
@@ -216,7 +216,7 @@ class MenuTournoi:
         jour_valide = False
         while jour_valide is False:
             self.jour = input("Entrez le jour du tournoi: (JJ)\t")
-            if self.jour.isdigit() and int(self.jour) < 32:
+            if self.jour.isdigit() and len(self.mois) == 2 and int(self.jour) < 32:
                 jour_valide = True
                 liste_date.append(self.jour)
                 break
@@ -227,9 +227,9 @@ class MenuTournoi:
                 print("Vous devez entrer un nombre à 2 chiffres <= 31")
 
         mois_valide = False
-        if mois_valide is False:
+        while mois_valide is False:
             self.mois = input("Entrez le mois du tournoi: (MM)\t")
-            if self.mois.isdigit() and int(self.mois) < 13:
+            if self.mois.isdigit() and len(self.mois) == 2 and int(self.mois) < 13:
                 mois_valide = True
                 liste_date.append(self.mois)
             else:
@@ -239,7 +239,7 @@ class MenuTournoi:
                 print("Vous devez entrer un nombre à 2 chiffres <= 12")
 
         annee_valid = False
-        if annee_valid is False:
+        while annee_valid is False:
             self.annee = input("Entrez l'année du tournoi: (AAAA)\t")
             if self.annee.isdigit() and len(self.annee) == 4:
                 annee_valid = True
@@ -263,7 +263,7 @@ class MenuTournoi:
         print("Choisissez le contrôle du temps:")
         temps_valide = False
         controle_temps = None
-        if temps_valide is False:
+        while temps_valide is False:
             choix = input("1.Blitz  2.Bullet  3.Un coup rapide ?\t")
             if choix == "1":
                 controle_temps = "Bullet"
@@ -326,7 +326,7 @@ class MenuRapportTournoi:
             str: recupere le choix
         """
         choix_valide = False
-        if choix_valide is False:
+        while choix_valide is False:
             print()
             print(
                 "1/ afficher la liste de tous les joueurs d'un tournoi ?\n"
@@ -389,7 +389,7 @@ class MenuRapportJoueur:
             str: recupere le choix
         """
         choix_valide = False
-        if choix_valide is False:
+        while choix_valide is False:
             print()
             print(
                 "1/ afficher le rapport des joueurs par ordre alphabétique ?\n"
@@ -448,7 +448,7 @@ class MenuTour:
             str: recupere le choix
         """
         valid_tour = False
-        if valid_tour is False:
+        while valid_tour is False:
             print()
             commencer = input("Voulez-vous commencer le tour ? (oui/non)\t")
             if commencer == "oui":
@@ -470,7 +470,7 @@ class MenuTour:
             str: recupere le choix
         """
         valid_tour = False
-        if valid_tour is False:
+        while valid_tour is False:
             print()
             finir = input("Le Tour est-il terminé ? (oui/non)\t")
             if finir == "oui":

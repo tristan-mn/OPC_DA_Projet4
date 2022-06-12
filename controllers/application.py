@@ -242,7 +242,7 @@ class TournoiManager:
             print(
                 "1/ nom \n" "2/ lieu \n" "3/ date \n" "4/ temps \n" "5/ description \n"
             )
-            if choix_valide is False:
+            while choix_valide is False:
                 print()
                 choix_modification = input("Que voulez-vous modifier ?\t")
 
@@ -506,7 +506,7 @@ class JoueurManager:
             str: prenom du joueur
         """
         prenom_valide = False
-        if prenom_valide is False:
+        while prenom_valide is False:
             prenom_joueur = input("Quel est le prénom du joueur ?\t")
             if prenom_joueur != "":
                 prenom_valide = True
@@ -524,7 +524,7 @@ class JoueurManager:
             str: nom du joueur
         """
         nom_valide = False
-        if nom_valide is False:
+        while nom_valide is False:
             nom_joueur = input("Quel est le nom du joueur ?\t")
             if nom_joueur != "":
                 nom_valide = True
@@ -544,7 +544,7 @@ class JoueurManager:
         liste_date = []
         jour_valide = False
 
-        if jour_valide is False:
+        while jour_valide is False:
             self.jour = input("Entrez le jour de naissance: (JJ)\t")
             if self.jour.isdigit() and len(self.jour) == 2 and int(self.jour) < 32:
                 jour_valide = True
@@ -556,7 +556,7 @@ class JoueurManager:
                 print("Vous devez entrer un nombre à 2 chiffres <= 31")
 
         mois_valide = False
-        if mois_valide is False:
+        while mois_valide is False:
             self.mois = input("Entrez le mois de naissance: (MM)\t")
             if self.mois.isdigit() and len(self.mois) == 2 and int(self.mois) < 13:
                 mois_valide = True
@@ -568,7 +568,7 @@ class JoueurManager:
                 print("Vous devez entrer un nombre à 2 chiffres <= 12")
 
         annee_valid = False
-        if annee_valid is False:
+        while annee_valid is False:
             self.annee = input("Entrez l'année de naissance: (AAAA)\t")
             if self.annee.isdigit() and len(self.annee) == 4:
                 annee_valid = True
@@ -588,7 +588,7 @@ class JoueurManager:
             str: sexe du joueur au format M ou F
         """
         sexe_valide = False
-        if sexe_valide is False:
+        while sexe_valide is False:
             sexe_joueur = input("Quel est son sexe ? (M/F)\t")
             if sexe_joueur == "M" or sexe_joueur == "F":
                 sexe_valide = True
@@ -606,7 +606,7 @@ class JoueurManager:
             int: retourne un nombre entre 1 et 100
         """
         classement_valide = False
-        if classement_valide is False:
+        while classement_valide is False:
             classement_joueur = int(
                 input("Quel est le classement mondial du joueur ? (1 --> 100)\t")
             )
