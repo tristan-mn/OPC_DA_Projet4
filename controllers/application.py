@@ -31,9 +31,8 @@ class TournoiManager:
 
     def ajout_joueurs(self):
         """
-        Cette méthode permet de demander
-        les informations de chaque joueur participant au tournoi
-
+        Cette méthode permet de demander les informations de chaque joueur participant au tournoi
+ 
         on demande d'abord de quel tournoi il s'agit
         on créé une instance de joueur pour chaque joueur avec ses informations
         on ajoute les joueurs au tournoi dans la base de données
