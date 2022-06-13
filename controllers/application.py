@@ -52,9 +52,11 @@ class TournoiManager:
         menu_tournoi = MenuTournoi()
         tournoi_choisi = menu_tournoi.ajout_joueurs()
         try:
-            self.tournoi = Tournoi(**tournois_database.get(where("nom") == tournoi_choisi))
+            self.tournoi = Tournoi(
+                **tournois_database.get(where("nom") == tournoi_choisi)
+            )
         except TypeError:
-            
+
             print()
             print("Le tournoi ne se trouve pas dans la base de données.")
             print("Veuillez rééssayer")
@@ -131,7 +133,7 @@ class TournoiManager:
             dict: on retourne un dictionnaire avec toutes les infos du tour
         """
         gestion_match = MatchManager()
-        gestion_match.tournoi= self.tournoi
+        gestion_match.tournoi = self.tournoi
         menu = MenuTour()
         menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
@@ -162,7 +164,7 @@ class TournoiManager:
             dict: on retourne un dictionnaire avec toutes les informations du tour
         """
         gestion_match = MatchManager()
-        gestion_match.tournoi= self.tournoi
+        gestion_match.tournoi = self.tournoi
         menu = MenuTour()
         menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
@@ -182,7 +184,7 @@ class TournoiManager:
     def lancer_tournoi(self):
         """
 
-        c'est méthode lance le tournoi
+        cette méthode lance le tournoi
 
         """
 
@@ -209,22 +211,29 @@ class TournoiManager:
             try:
                 premier_tour = self.commencer_premier_tour()
                 self.tournoi.tours.append(premier_tour)
-            except TypeError:
+            except TypeError as e:
+                print(e)
                 return print("\n Le tournoi ne possède pas de joueurs")
 
             # on met à jour les tours du tournoi dans la base données
             self.tournoi.update_tours(self.tournoi.tours)
             self.tournoi.tours_joues = 1
-            tournois_database.update({"tours_joues": self.tournoi.tours_joues}, where("nom") == self.tournoi.nom)
+            tournois_database.update(
+                {"tours_joues": self.tournoi.tours_joues},
+                where("nom") == self.tournoi.nom,
+            )
 
             # 3 derniers tours du tournoi
             numero = 2
-            for i in range(self.tournoi.nombre_tours):
+            for i in range(1, self.tournoi.nombre_tours):
                 tour_suivant = self.commencer_tour_suivant(nb_round=numero)
                 self.tournoi.tours.append(tour_suivant)
                 self.tournoi.update_tours(self.tournoi.tours)
                 self.tournoi.tours_joues += 1
-                tournois_database.update({"tours_joues": self.tournoi.tours_joues}, where("nom") == self.tournoi.nom)
+                tournois_database.update(
+                    {"tours_joues": self.tournoi.tours_joues},
+                    where("nom") == self.tournoi.nom,
+                )
                 numero += 1
 
     def modifier_tournoi(self):
@@ -316,7 +325,7 @@ class TournoiManager:
             return print("\nLe tournoi ne se trouve pas dans la base de données.\n")
 
         nb_tours_suivants = self.tournoi.nombre_tours - self.tournoi.tours_joues
-        round = self.tournoi.tours_joues + 1  
+        round = self.tournoi.tours_joues + 1
         if self.tournoi.tours_joues == 0:
             print()
             print("Nous vous informons que ce tournoi n'a pas encore commencé")
@@ -335,7 +344,11 @@ class TournoiManager:
                 self.tournoi.tours.append(tour_suivant)
                 self.tournoi.update_tours(self.tournoi.tours)
                 self.tournoi.tours_joues += 1
-                tournois_database.update({"tours_joues": self.tournoi.tours_joues}, where("nom") == self.tournoi.nom)
+                tournois_database.update(
+                    {"tours_joues": self.tournoi.tours_joues},
+                    where("nom") == self.tournoi.nom,
+                )
+
 
 class MatchManager(TournoiManager):
     """
@@ -349,7 +362,6 @@ class MatchManager(TournoiManager):
     def __init__(self):
         super().__init__()
         self.tournoi = None
-    
 
     def creer_premiers_matchs(self, joueurs_triés):
         """
@@ -389,6 +401,7 @@ class MatchManager(TournoiManager):
         Returns:
             tableau: retourne un tableau des instances de tous les matchs
         """
+        print(joueurs_triés)
         indice_premier_joueur = 7
         indice_deuxieme_joueur = 6
         nb_matchs = 4
@@ -396,15 +409,16 @@ class MatchManager(TournoiManager):
         matchs = []
 
         for un_match in range(nb_matchs):
+            premier_joueur = joueurs_triés[indice_premier_joueur]
+            deuxieme_joueur = joueurs_triés[indice_deuxieme_joueur]
             un_match = Match(
-                joueur1=joueurs_triés[indice_premier_joueur],
-                joueur2=joueurs_triés[indice_deuxieme_joueur],
-                numero=match_numero,
+                joueur1=premier_joueur, joueur2=deuxieme_joueur, numero=match_numero,
             )
             match_numero += 1
             indice_premier_joueur -= 2
             indice_deuxieme_joueur -= 2
             matchs.append(un_match)
+
         return matchs
 
     def resultat_match(self, matchs):
@@ -438,12 +452,14 @@ class MatchManager(TournoiManager):
                 + " "
                 + match_serialized["nom_joueur2"]
             )
+            match.joueur1[6].append(joueur2)
+            match.joueur2[6].append(joueur1)
 
             score_joueur1_valid = False
             while score_joueur1_valid is False:
                 print(f"quel est le score du joueur {joueur1}\t")
                 score_joueur1 = input("=>\t")
-            # ajout des points dans les infos du match
+                # ajout des points dans les infos du match
                 try:
                     match_serialized["score_joueur1"] += float(score_joueur1)
                     score_joueur1_valid = True
@@ -454,7 +470,7 @@ class MatchManager(TournoiManager):
             while score_joueur2_valid is False:
                 print(f"quel est le score du joueur {joueur2}\t")
                 score_joueur2 = input("=>\t")
-            # ajout des points dans les infos du match
+                # ajout des points dans les infos du match
                 try:
                     match_serialized["score_joueur2"] += float(score_joueur2)
                     score_joueur2_valid = True
@@ -486,12 +502,14 @@ class MatchManager(TournoiManager):
                     and joueur["nom"] == match_serialized["nom_joueur1"]
                 ):
                     joueur["score"] += match_serialized["score_joueur1"]
+                    joueur["adversaires"].append(joueur2)
                     joueurs_modifies.append(joueur)
                 elif (
                     joueur["prenom"] == match_serialized["prenom_joueur2"]
                     and joueur["nom"] == match_serialized["nom_joueur2"]
                 ):
                     joueur["score"] += match_serialized["score_joueur2"]
+                    joueur["adversaires"].append(joueur1)
                     joueurs_modifies.append(joueur)
                 else:
                     joueurs_modifies.append(joueur)

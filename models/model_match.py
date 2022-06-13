@@ -25,11 +25,10 @@ class Match:
         self.nom_match = "Match " + str(self.numero)
 
     def __call__(self):
-        return [[self.joueur1, self.score_joueur1],
-                [self.joueur2, self.score_joueur2]]
+        return [[self.joueur1, self.score_joueur1], [self.joueur2, self.score_joueur2]]
 
     def __str__(self) -> str:
-        return f"{self.nom_match}: {self.nom_joueur1} VS {self.nom_joueur2}\n"
+        return f"{self.nom_match}: {self.nom_joueur1} --VS-- {self.nom_joueur2}\n"
 
     def afficher_match(self, numero_match):
         print(

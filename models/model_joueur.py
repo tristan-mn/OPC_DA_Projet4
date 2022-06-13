@@ -17,6 +17,7 @@ class Joueur:
         sexe=None,
         classement=0,
         score=0,
+        adversaires=None
     ):
 
         self.prenom = prenom
@@ -25,6 +26,7 @@ class Joueur:
         self.sexe = sexe
         self.classement = classement
         self.score = score
+        self.adversaires = adversaires
         self.infos_joueur = [
             self.prenom,
             self.nom,
@@ -32,6 +34,7 @@ class Joueur:
             self.sexe,
             self.classement,
             self.score,
+            self.adversaires
         ]
 
     def __call__(self):
@@ -65,6 +68,7 @@ class Joueur:
         infos_joueur["sexe"] = self.sexe
         infos_joueur["classement"] = self.classement
         infos_joueur["score"] = self.score
+        infos_joueur["adversaires"] = self.adversaires
         return infos_joueur
 
     def ajout_joueur_database(self, joueur):

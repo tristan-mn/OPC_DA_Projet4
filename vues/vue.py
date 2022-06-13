@@ -216,7 +216,7 @@ class MenuTournoi:
         jour_valide = False
         while jour_valide is False:
             self.jour = input("Entrez le jour du tournoi: (JJ)\t")
-            if self.jour.isdigit() and len(self.mois) == 2 and int(self.jour) < 32:
+            if self.jour.isdigit() and len(self.jour) == 2 and int(self.jour) < 32:
                 jour_valide = True
                 liste_date.append(self.jour)
                 break
