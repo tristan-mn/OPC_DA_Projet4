@@ -439,15 +439,27 @@ class MatchManager(TournoiManager):
                 + match_serialized["nom_joueur2"]
             )
 
-            print(f"quel est le score du joueur {joueur1}\t")
-            score_joueur1 = input("=>\t")
+            score_joueur1_valid = False
+            while score_joueur1_valid is False:
+                print(f"quel est le score du joueur {joueur1}\t")
+                score_joueur1 = input("=>\t")
             # ajout des points dans les infos du match
-            match_serialized["score_joueur1"] += float(score_joueur1)
+                try:
+                    match_serialized["score_joueur1"] += float(score_joueur1)
+                    score_joueur1_valid = True
+                except ValueError:
+                    print("\nVous devez choisir un nombre (0 , 0.5 , 1)")
 
-            print(f"quel est le score du joueur {joueur2}\t")
-            score_joueur2 = input("=>\t")
+            score_joueur2_valid = False
+            while score_joueur2_valid is False:
+                print(f"quel est le score du joueur {joueur2}\t")
+                score_joueur2 = input("=>\t")
             # ajout des points dans les infos du match
-            match_serialized["score_joueur2"] += float(score_joueur2)
+                try:
+                    match_serialized["score_joueur2"] += float(score_joueur2)
+                    score_joueur2_valid = True
+                except ValueError:
+                    print("\nVous devez choisir un nombre (0 , 0.5 , 1)")
 
             # ajout des points dans la liste des infos du joueur
             # match_serialized["joueur2"][5] += float(score_joueur2)
