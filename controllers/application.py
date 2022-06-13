@@ -32,7 +32,7 @@ class TournoiManager:
     def ajout_joueurs(self):
         """
         Cette méthode permet de demander les informations de chaque joueur participant au tournoi
- 
+
         on demande d'abord de quel tournoi il s'agit
         on créé une instance de joueur pour chaque joueur avec ses informations
         on ajoute les joueurs au tournoi dans la base de données
@@ -50,13 +50,11 @@ class TournoiManager:
         joueur_manager = JoueurManager()
         menu_joueur = MenuJoueur()
         menu_tournoi = MenuTournoi()
-
         tournoi_choisi = menu_tournoi.ajout_joueurs()
         try:
-            self.tournoi = Tournoi(
-                **tournois_database.get(where("nom") == tournoi_choisi)
-            )
+            self.tournoi = Tournoi(**tournois_database.get(where("nom") == tournoi_choisi))
         except TypeError:
+            
             print()
             print("Le tournoi ne se trouve pas dans la base de données.")
             print("Veuillez rééssayer")
@@ -133,6 +131,7 @@ class TournoiManager:
             dict: on retourne un dictionnaire avec toutes les infos du tour
         """
         gestion_match = MatchManager()
+        gestion_match.tournoi= self.tournoi
         menu = MenuTour()
         menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
@@ -163,14 +162,15 @@ class TournoiManager:
             dict: on retourne un dictionnaire avec toutes les informations du tour
         """
         gestion_match = MatchManager()
+        gestion_match.tournoi= self.tournoi
         menu = MenuTour()
         menu.commencer_tour()
         debut_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
         tri_suivant = self.tri_joueurs_points_tournoi()
-        matchs = gestion_match.creer_matchs_suivants(self, tri_suivant)
+        matchs = gestion_match.creer_matchs_suivants(tri_suivant)
         menu.finir_tour()
         fin_temps = time.strftime(format("%d/%m/%Y - %Hh%Mm%Ss"))
-        resultat_tour_suivant = gestion_match.resultat_match(self, matchs)
+        resultat_tour_suivant = gestion_match.resultat_match(matchs)
         tour_suivant = Tour(
             date_heure_debut=debut_temps,
             date_heure_fin=fin_temps,
@@ -194,13 +194,17 @@ class TournoiManager:
             self.tournoi = Tournoi(
                 **tournois_database.get(where("nom") == choix_tournoi)
             )
-
         except TypeError:
             print()
             print("Le tournoi ne se trouve pas dans la base de données.")
             print("Veuillez rééssayer")
 
         else:
+            if self.tournoi.tours_joues != 0:
+                return print("\nLe tournoi a déjà commencé\n")
+
+            elif self.tournoi.tours_joues == 4:
+                return print("\nLe tournoi est déjà terminé\n")
             # on lance le premier tour du tournoi
             try:
                 premier_tour = self.commencer_premier_tour()
@@ -210,7 +214,8 @@ class TournoiManager:
 
             # on met à jour les tours du tournoi dans la base données
             self.tournoi.update_tours(self.tournoi.tours)
-            self.tournoi.nombre_tours -= 1
+            self.tournoi.tours_joues = 1
+            tournois_database.update({"tours_joues": self.tournoi.tours_joues}, where("nom") == self.tournoi.nom)
 
             # 3 derniers tours du tournoi
             numero = 2
@@ -218,7 +223,8 @@ class TournoiManager:
                 tour_suivant = self.commencer_tour_suivant(nb_round=numero)
                 self.tournoi.tours.append(tour_suivant)
                 self.tournoi.update_tours(self.tournoi.tours)
-                self.tournoi.nombre_tours -= 1
+                self.tournoi.tours_joues += 1
+                tournois_database.update({"tours_joues": self.tournoi.tours_joues}, where("nom") == self.tournoi.nom)
                 numero += 1
 
     def modifier_tournoi(self):
@@ -304,12 +310,14 @@ class TournoiManager:
         nom_tournoi = input("Quel tournoi voulez-vous reprendre ?\t")
         try:
             self.tournoi = Tournoi(**tournois_database.get(where("nom") == nom_tournoi))
+            print(self.tournoi.tours_joues)
 
         except TypeError:
             return print("\nLe tournoi ne se trouve pas dans la base de données.\n")
 
-        nb_tours_suivants = self.tournoi.nombre_tours
-        if self.tournoi.nombre_tours == 4:
+        nb_tours_suivants = self.tournoi.nombre_tours - self.tournoi.tours_joues
+        round = self.tournoi.tours_joues + 1  
+        if self.tournoi.tours_joues == 0:
             print()
             print("Nous vous informons que ce tournoi n'a pas encore commencé")
             print()
@@ -317,13 +325,17 @@ class TournoiManager:
             print()
             self.lancer_tournoi()
 
+        elif self.tournoi.tours_joues == 4:
+            print()
+            print("Le tournoi est déjà terminé")
+
         else:
             for i in range(nb_tours_suivants):
-                tour_suivant = self.commencer_tour_suivant()
+                tour_suivant = self.commencer_tour_suivant(nb_round=round)
                 self.tournoi.tours.append(tour_suivant)
                 self.tournoi.update_tours(self.tournoi.tours)
-                self.tournoi.nombre_tours = -1
-
+                self.tournoi.tours_joues += 1
+                tournois_database.update({"tours_joues": self.tournoi.tours_joues}, where("nom") == self.tournoi.nom)
 
 class MatchManager(TournoiManager):
     """
@@ -335,7 +347,9 @@ class MatchManager(TournoiManager):
     """
 
     def __init__(self):
-        pass
+        super().__init__()
+        self.tournoi = None
+    
 
     def creer_premiers_matchs(self, joueurs_triés):
         """

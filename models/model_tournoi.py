@@ -16,18 +16,20 @@ class Tournoi:
         date,
         temps,
         description,
+        tours,
+        tours_joues=None,
         nombre_tours=4,
-        joueurs=None,
-        tours=[],
+        joueurs=None
     ):
         self.nom = nom
         self.lieu = lieu
         self.date = date
         self.temps = temps
         self.description = description
+        self.tours_joues = tours_joues
+        self.tours = tours
         self.nombre_tours = nombre_tours
         self.joueurs = joueurs
-        self.tours = tours
         self.infos_tournoi = [
             self.nom,
             self.lieu,
@@ -88,9 +90,10 @@ class Tournoi:
         infos_tournoi["date"] = self.date
         infos_tournoi["temps"] = self.temps
         infos_tournoi["description"] = self.description
+        infos_tournoi["tours_joues"] = self.tours_joues
         infos_tournoi["nombre_tours"] = self.nombre_tours
-        infos_tournoi["joueurs"] = self.joueurs
         infos_tournoi["tours"] = self.tours
+        infos_tournoi["joueurs"] = self.joueurs
         return infos_tournoi
 
     def add_to_database(self, tournoi):
