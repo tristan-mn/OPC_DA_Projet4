@@ -1,5 +1,6 @@
 from tinydb import TinyDB, where
 
+
 tournois_database = TinyDB("tournois.json", indent=4)
 
 
@@ -16,10 +17,10 @@ class Tournoi:
         date,
         temps,
         description,
-        tours,
-        tours_joues=None,
+        tours=[],
+        tours_joues=0,
         nombre_tours=4,
-        joueurs=None
+        joueurs=None,
     ):
         self.nom = nom
         self.lieu = lieu
@@ -44,6 +45,16 @@ class Tournoi:
     def __call__(self):
         return self.infos_tournoi
 
+    def __str__(self) -> str:
+        return (
+            f"***** Bienvenue au Tournoi *****\n"
+            f"*****  {self.nom} *****\n"
+            f"Lieu: {self.lieu}\n"
+            f"date : {self.date}\n"
+            f"Système: {self.temps}\n"
+            f"Description :{self.description}\n"
+        )
+
     def afficher_tournoi(self):
         print(
             "***** Bienvenue au Tournoi *****\n"
@@ -58,11 +69,12 @@ class Tournoi:
 
     def afficher_joueurs(self):
         print("Joueurs :")
-        if len(self.joueurs) > 0:
+
+        if self.joueurs is None:
+            print("Il n'y a pas encore de joueurs\n")
+        elif len(self.joueurs) > 0:
             for joueur in self.joueurs:
                 print(joueur)
-        else:
-            print("Il n'y a pas encore de joueurs")
 
     def afficher_tours(self):
         print("Tours :")
@@ -73,7 +85,7 @@ class Tournoi:
             for tour in tours_unserialized:
                 tour.afficher_tour()
         else:
-            print("Il n'y a pas encore de tours")
+            print("Il n'y a pas encore de tours\n")
 
     def afficher_matchs(self):
         print("Matchs :")

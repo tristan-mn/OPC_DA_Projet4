@@ -22,10 +22,7 @@ class Tour:
         self.liste_matchs = liste_matchs
 
     def __call__(self):
-        return [self.nom,
-                self.date_heure_debut,
-                self.date_heure_fin,
-                self.liste_matchs]
+        return [self.nom, self.date_heure_debut, self.date_heure_fin, self.liste_matchs]
 
     def afficher_tour(self):
         print(

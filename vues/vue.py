@@ -420,9 +420,7 @@ class MenuRapportJoueur:
         """
         print()
         print("#" * 37)
-        print(
-            "***Voici le rapport des joueurs par ordre mondial**"
-        )
+        print("***Voici le rapport des joueurs par ordre mondial**")
         print("#" * 37 + "\n")
 
     def afficher_un_joueur(self):
