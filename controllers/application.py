@@ -449,7 +449,11 @@ class MatchManager(TournoiManager):
                 print(f"quel est le score du joueur {joueur1}\t")
                 score_joueur1 = input("=>\t")
                 # ajout des points dans les infos du match
-                if score_joueur1 == "0" or score_joueur1 == "0.5" or score_joueur1 == "1":
+                if (
+                    score_joueur1 == "0"
+                    or score_joueur1 == "0.5"
+                    or score_joueur1 == "1"
+                ):
                     match_serialized["score_joueur1"] += float(score_joueur1)
                     score_joueur1_valid = True
                 else:
@@ -460,7 +464,11 @@ class MatchManager(TournoiManager):
                 print(f"quel est le score du joueur {joueur2}\t")
                 score_joueur2 = input("=>\t")
                 # ajout des points dans les infos du match
-                if score_joueur2 == "0" or score_joueur2 == "0.5" or score_joueur2 == "1":
+                if (
+                    score_joueur2 == "0"
+                    or score_joueur2 == "0.5"
+                    or score_joueur2 == "1"
+                ):
                     match_serialized["score_joueur2"] += float(score_joueur2)
                     score_joueur2_valid = True
                 else:
@@ -884,7 +892,7 @@ class ModifierJoueur(JoueurManager):
     def __call__(self):
         choix_joueur = self.choix_joueur()
         if choix_joueur is None:
-            return print()
+            print("\nLe joueur ne fait pas partie du tournoi\n")
         else:
             self.choix_modification()
 
@@ -925,13 +933,15 @@ class ModifierJoueur(JoueurManager):
                         and joueur["nom"] == nom_joueur
                     ):
                         print("\nVoici le joueur demandé:\n")
+                        joueur_choisi = joueur
                         print(Joueur(**joueur))
-                        return joueur
-                print("le joueur ne fait pas partie du tournoi")
+                        return joueur_choisi
+
             except TypeError:
                 return print("\nLe tournoi ne possède pas de joueurs\n")
 
         self.joueur = chercher(joueurs=self.joueurs_tournoi)
+        return self.joueur
 
     def choix_modification(self):
         """
@@ -975,10 +985,17 @@ class ModifierJoueur(JoueurManager):
     def modifier_prenom(self):
         print("\nVoici l'ancien prenom:\n")
         print(self.joueur["prenom"])
+        print()
 
         ancien_joueur = self.joueur
         nouveau_prenom = self.ajout_prenom_joueur()
 
+        # modification pour la base données des joueurs
+        joueurs_database.update(
+            {"prenom": nouveau_prenom}, where("prenom") == ancien_joueur["prenom"]
+        )
+
+        # modification pour la base de données des tournois
         for joueur in self.joueurs_tournoi:
             if joueur == ancien_joueur:
                 joueur["prenom"] = nouveau_prenom
@@ -994,10 +1011,17 @@ class ModifierJoueur(JoueurManager):
     def modifier_nom(self):
         print("\nVoici l'ancien nom:\n")
         print(self.joueur["nom"])
+        print()
 
         ancien_joueur = self.joueur
         nouveau_nom = self.ajout_nom_joueur()
 
+        # modification pour la base données des joueurs
+        joueurs_database.update(
+            {"nom": nouveau_nom}, where("prenom") == ancien_joueur["prenom"]
+        )
+
+        # modification pour la base de données des tournois
         for joueur in self.joueurs_tournoi:
             if joueur == ancien_joueur:
                 joueur["nom"] = nouveau_nom
@@ -1013,10 +1037,18 @@ class ModifierJoueur(JoueurManager):
     def modifier_date_naissance(self):
         print("\nVoici l'ancienne date de naissance:\n")
         print(self.joueur["date_naissance"])
+        print()
 
         ancien_joueur = self.joueur
         nouvelle_date = self.ajout_date_naissance_joueur()
 
+        # modification pour la base données des joueurs
+        joueurs_database.update(
+            {"date_naissance": nouvelle_date},
+            where("prenom") == ancien_joueur["prenom"],
+        )
+
+        # modification pour la base de données des tournois
         for joueur in self.joueurs_tournoi:
             if joueur == ancien_joueur:
                 joueur["date_naissance"] = nouvelle_date
@@ -1032,10 +1064,17 @@ class ModifierJoueur(JoueurManager):
     def modifier_sexe(self):
         print("\nVoici l'ancien sexe:\n")
         print(self.joueur["sexe"])
+        print()
 
         ancien_joueur = self.joueur
         nouveau_sexe = self.ajout_sexe_joueur()
 
+        # modification pour la base données des joueurs
+        joueurs_database.update(
+            {"sexe": nouveau_sexe}, where("prenom") == ancien_joueur["prenom"]
+        )
+
+        # modification pour la base de données des tournois
         for joueur in self.joueurs_tournoi:
             if joueur == ancien_joueur:
                 joueur["sexe"] = nouveau_sexe
@@ -1051,10 +1090,18 @@ class ModifierJoueur(JoueurManager):
     def modifier_classement(self):
         print("\nVoici l'ancien classement:\n")
         print(self.joueur["classement"])
+        print()
 
         ancien_joueur = self.joueur
         nouveau_classement = self.ajout_classement_joueur()
 
+        # modification pour la base données des joueurs
+        joueurs_database.update(
+            {"classement": nouveau_classement},
+            where("prenom") == ancien_joueur["prenom"],
+        )
+
+        # modification pour la base de données des tournois
         for joueur in self.joueurs_tournoi:
             if joueur == ancien_joueur:
                 joueur["classement"] = nouveau_classement
