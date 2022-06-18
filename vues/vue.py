@@ -61,6 +61,7 @@ class Quitter:
         print()
         print(37 * "*")
         print(37 * "*")
+        print(7 * "*" + "  Vous quittez l'application  " + 7 * "*")
         time.sleep(2)
         print(14 * "*" + "  MERCI  " + 14 * "*")
         time.sleep(2)

@@ -341,7 +341,8 @@ class TournoiManager:
 
         else:
             for i in range(nb_tours_suivants):
-                tour_suivant = self.commencer_tour_suivant(nb_round=round)
+                numero_round = self.tournoi.tours_joues + 1
+                tour_suivant = self.commencer_tour_suivant(nb_round=numero_round)
                 self.tournoi.tours.append(tour_suivant)
                 self.tournoi.update_tours(self.tournoi.tours)
                 self.tournoi.tours_joues += 1
